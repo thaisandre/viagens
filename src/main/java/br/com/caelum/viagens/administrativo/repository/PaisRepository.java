@@ -11,5 +11,7 @@ public interface PaisRepository extends Repository<Pais, Long> {
 	void save(Pais pais);
 
 	Optional<Pais> findByNome(String nome);
+	
+	Optional<Pais> findById(Long id);
 
 }
