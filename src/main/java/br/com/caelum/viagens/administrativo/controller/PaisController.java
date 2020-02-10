@@ -21,7 +21,7 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto
 import br.com.caelum.viagens.administrativo.controller.dto.output.PaisOutputDto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.validator.NewPaisValidator;
+import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
 
 @RestController
 @RequestMapping("/paises")
@@ -32,7 +32,7 @@ public class PaisController {
 
 	@InitBinder("newPaisInputDto")
 	public void InitBinder(WebDataBinder webDataBinder) {
-		webDataBinder.addValidators(new NewPaisValidator(this.paisRepository));
+		webDataBinder.addValidators(new PaisExistenteValidator(this.paisRepository));
 	}
 
 	@PostMapping

@@ -51,12 +51,9 @@ public class PaisControllerTests {
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("Chile");
 		
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR");
-		
 		RequestBuilder request = post("/paises")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.headers(httpHeaders)
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
 				
 		mockMvc.perform(request)
@@ -69,12 +66,9 @@ public class PaisControllerTests {
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("");
 		
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR");
-		
 		RequestBuilder request = post("/paises")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.headers(httpHeaders)
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
 				
 		mockMvc.perform(request)
@@ -89,12 +83,9 @@ public class PaisControllerTests {
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("Brasil");
 		
-		HttpHeaders httpHeaders = new HttpHeaders();
-		httpHeaders.add(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR");
-		
 		RequestBuilder request = post("/paises")
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
-				.headers(httpHeaders)
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
 				
 		mockMvc.perform(request)

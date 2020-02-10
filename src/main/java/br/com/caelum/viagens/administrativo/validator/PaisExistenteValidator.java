@@ -10,12 +10,12 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-public class NewPaisValidator implements Validator{
+public class PaisExistenteValidator implements Validator{
 	
 	@Autowired
 	private PaisRepository paisRepository;
 	
-	public NewPaisValidator(PaisRepository paisRepository) {
+	public PaisExistenteValidator(PaisRepository paisRepository) {
 		this.paisRepository = paisRepository;
 	}
 
