@@ -3,7 +3,6 @@ package br.com.caelum.viagens.administrativo.validator;
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.util.StringUtils;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
@@ -28,11 +27,12 @@ public class PaisNaoExistenteValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		NewCompanhiaInputDto newCompanhiaInput = (NewCompanhiaInputDto) target;
+		if(newCompanhiaInput.getPaisId() != null) {
+			Optional<Pais> paisBuscado = this.paisRepository.findById(newCompanhiaInput.getPaisId());
 
-		Optional<Pais> paisBuscado = this.paisRepository.findByNome(newCompanhiaInput.getPais());
-
-		if (StringUtils.hasText(newCompanhiaInput.getPais()) && !paisBuscado.isPresent()) {
-			errors.rejectValue("pais", null, "País não existe no sistema.");
+			if(!paisBuscado.isPresent()) {
+				errors.rejectValue("paisId", null, "País não existe no sistema.");
+			}
 		}
 	}
 

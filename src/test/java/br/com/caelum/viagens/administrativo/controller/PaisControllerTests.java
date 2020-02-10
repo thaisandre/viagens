@@ -38,8 +38,8 @@ public class PaisControllerTests {
 	
 	@Autowired
 	private PaisRepository paisRepository;
-	@BeforeEach
 	
+	@BeforeEach
 	public void setUp() {
 		this.paisRepository.save(new Pais("Argentina"));
 		this.paisRepository.save(new Pais("Brasil"));

@@ -8,7 +8,7 @@ import br.com.caelum.viagens.administrativo.model.Pais;
 
 public interface PaisRepository extends Repository<Pais, Long> {
 
-	void save(Pais pais);
+	Pais save(Pais pais);
 
 	Optional<Pais> findByNome(String nome);
 	

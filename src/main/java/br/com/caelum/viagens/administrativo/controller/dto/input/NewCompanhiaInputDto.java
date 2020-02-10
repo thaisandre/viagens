@@ -3,6 +3,7 @@ package br.com.caelum.viagens.administrativo.controller.dto.input;
 import java.util.Optional;
 
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
@@ -12,28 +13,28 @@ public class NewCompanhiaInputDto {
 
 	@NotBlank
 	private String nome;
-
-	@NotBlank
-	private String pais;
+	
+	@NotNull
+	private Long paisId;
 
 	public String getNome() {
 		return nome;
 	}
-
+	
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-
-	public String getPais() {
-		return pais;
+	
+	public Long getPaisId() {
+		return paisId;
 	}
 
-	public void setPais(String pais) {
-		this.pais = pais;
+	public void setPaisId(Long paisId) {
+		this.paisId = paisId;
 	}
 
 	public Companhia toModel(PaisRepository paisRepository) {
-		Optional<Pais> pais = paisRepository.findByNome(this.pais);
+		Optional<Pais> pais = paisRepository.findById(this.paisId.longValue());
 		return new Companhia(this.nome, pais.get());
 	}
 
