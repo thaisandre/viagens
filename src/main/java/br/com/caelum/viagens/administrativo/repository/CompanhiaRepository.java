@@ -11,5 +11,7 @@ public interface CompanhiaRepository extends Repository<Companhia, Long>{
 	void save(Companhia companhia);
 
 	Optional<Companhia> findByNome(String nome);
+	
+	Optional<Companhia> findById(Long id);
 
 }
