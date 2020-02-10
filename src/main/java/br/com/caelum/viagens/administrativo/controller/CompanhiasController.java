@@ -4,6 +4,8 @@ import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -14,6 +16,8 @@ import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaOutpu
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
+import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
+import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/companhias")
@@ -24,6 +28,13 @@ public class CompanhiasController {
 	
 	@Autowired
 	private CompanhiaRepository companhiaRepository;
+	
+	@InitBinder
+	public void initBinder(WebDataBinder webDataBinder) {
+		webDataBinder.addValidators(
+				new NomeCompanhiaExistenteValidator(this.companhiaRepository),
+				new PaisNaoExistenteValidator(this.paisRepository));
+	}
 	
 	@PostMapping
 	public ResponseEntity<CompanhiaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto) {
