@@ -1,5 +1,7 @@
 package br.com.caelum.viagens.administrativo.controller;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -24,7 +26,7 @@ public class CompanhiasController {
 	private CompanhiaRepository companhiaRepository;
 	
 	@PostMapping
-	public ResponseEntity<CompanhiaOutputDto> cadastro(@RequestBody NewCompanhiaInputDto newCompanhiaDto) {
+	public ResponseEntity<CompanhiaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto) {
 		Companhia companhia = newCompanhiaDto.toModel(this.paisRepository);
 		this.companhiaRepository.save(companhia);
 		return ResponseEntity.ok(new CompanhiaOutputDto(companhia));

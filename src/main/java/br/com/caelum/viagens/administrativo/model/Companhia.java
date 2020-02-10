@@ -1,11 +1,15 @@
 package br.com.caelum.viagens.administrativo.model;
 
+import java.time.Instant;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
+
+import org.springframework.format.annotation.DateTimeFormat;
 
 import com.sun.istack.NotNull;
 
@@ -18,6 +22,10 @@ public class Companhia {
 
 	@NotBlank
 	private String nome;
+	
+	@DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss")
+	@NotNull
+	private Instant instanteCriacao = Instant.now();
 
 	@ManyToOne
 	@NotNull
@@ -38,6 +46,10 @@ public class Companhia {
 
 	public String getNome() {
 		return nome;
+	}
+
+	public Instant getInstanteCriacao() {
+		return instanteCriacao;
 	}
 
 	public Pais getPais() {
