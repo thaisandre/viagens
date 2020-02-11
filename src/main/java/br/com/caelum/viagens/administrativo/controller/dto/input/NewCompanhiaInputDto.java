@@ -13,18 +13,18 @@ public class NewCompanhiaInputDto {
 
 	@NotBlank
 	private String nome;
-	
+
 	@NotNull
 	private Long paisId;
 
 	public String getNome() {
 		return nome;
 	}
-	
+
 	public void setNome(String nome) {
 		this.nome = nome;
 	}
-	
+
 	public Long getPaisId() {
 		return paisId;
 	}
@@ -34,8 +34,7 @@ public class NewCompanhiaInputDto {
 	}
 
 	public Companhia toModel(PaisRepository paisRepository) {
-		Optional<Pais> pais = paisRepository.findById(this.paisId.longValue());
+		Optional<Pais> pais = paisRepository.findById(this.paisId);
 		return new Companhia(this.nome, pais.get());
 	}
-
 }

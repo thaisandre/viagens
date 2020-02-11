@@ -3,6 +3,7 @@ package br.com.caelum.viagens.administrativo.handler;
 import java.util.List;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.FieldError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -16,10 +17,10 @@ import br.com.caelum.viagens.administrativo.handler.dto.ValidationErrorsDto;
 public class ValidationErrorsHandler {
 	
 	@ResponseStatus(HttpStatus.BAD_REQUEST)
-	@ExceptionHandler(MethodArgumentNotValidException.class)
+	@ExceptionHandler({MethodArgumentNotValidException.class, HttpMessageNotReadableException.class})
 	public ValidationErrorsDto handler(MethodArgumentNotValidException exception) {
-		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
 		
+		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
 		ValidationErrorsDto validationErrorsDto = new ValidationErrorsDto();
 		
 		fieldErrors.forEach(error -> {

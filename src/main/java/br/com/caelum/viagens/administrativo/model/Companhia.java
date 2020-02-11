@@ -9,8 +9,6 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 
-import org.springframework.format.annotation.DateTimeFormat;
-
 import com.sun.istack.NotNull;
 
 @Entity
@@ -23,7 +21,6 @@ public class Companhia {
 	@NotBlank
 	private String nome;
 	
-	@DateTimeFormat(pattern="dd/MM/yyyy HH:mm:ss")
 	@NotNull
 	private Instant instanteCriacao = Instant.now();
 
