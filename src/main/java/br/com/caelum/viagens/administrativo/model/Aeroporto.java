@@ -1,7 +1,5 @@
 package br.com.caelum.viagens.administrativo.model;
 
-import java.time.Instant;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +9,7 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 @Entity
-public class Companhia {
+public class Aeroporto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,18 +18,15 @@ public class Companhia {
 	@NotBlank
 	private String nome;
 
-	@NotNull
-	private Instant instanteCriacao = Instant.now();
-
 	@ManyToOne
 	@NotNull
 	private Pais pais;
 
 	@Deprecated
-	public Companhia() {
+	public Aeroporto() {
 	}
 
-	public Companhia(@NotBlank String nome, @NotNull Pais pais) {
+	public Aeroporto(@NotBlank String nome, @NotNull Pais pais) {
 		this.nome = nome;
 		this.pais = pais;
 	}
@@ -42,10 +37,6 @@ public class Companhia {
 
 	public String getNome() {
 		return nome;
-	}
-
-	public Instant getInstanteCriacao() {
-		return instanteCriacao;
 	}
 
 	public Pais getPais() {
