@@ -8,8 +8,10 @@ import br.com.caelum.viagens.administrativo.model.Aeroporto;
 
 public interface AeroportoRepository extends Repository<Aeroporto, Long>{
 
-	void save(Aeroporto aeroporto);
+	Aeroporto save(Aeroporto aeroporto);
 	
 	Optional<Aeroporto> findById(Long id);
+
+	Optional<Aeroporto> findByNome(String nome);
 
 }

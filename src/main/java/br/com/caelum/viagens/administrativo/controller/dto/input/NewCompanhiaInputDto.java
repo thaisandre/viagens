@@ -5,11 +5,12 @@ import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-public class NewCompanhiaInputDto {
+public class NewCompanhiaInputDto implements PossuiPaisDto {
 
 	@NotBlank
 	private String nome;

@@ -3,9 +3,13 @@ package br.com.caelum.viagens.administrativo.controller;
 import java.net.URI;
 import java.util.Optional;
 
+import javax.validation.Valid;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
+import org.springframework.web.bind.WebDataBinder;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.InitBinder;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
@@ -18,6 +22,8 @@ import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoOutpu
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
+import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
+import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/aeroportos")
@@ -28,9 +34,16 @@ public class AeroportosController {
 	
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
+	
+	@InitBinder("newAeroportoInputDto")
+	public void initBinder(WebDataBinder webDataBinder) {
+		webDataBinder.addValidators(
+				new NomeAeroportoExistenteValidator(aeroportoRepository),
+				new PaisNaoExistenteValidator(paisRepository));
+	}
 
 	@PostMapping
-	public ResponseEntity<AeroportoOutputDto> cadastro(@RequestBody NewAeroportoInputDto newAeroportoDto,
+	public ResponseEntity<AeroportoOutputDto> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
 			UriComponentsBuilder uribuilder){
 		Aeroporto aeroporto = newAeroportoDto.toModel(this.paisRepository);
 		this.aeroportoRepository.save(aeroporto);

@@ -35,7 +35,7 @@ public class CompanhiasController {
 	@Autowired
 	private CompanhiaRepository companhiaRepository;
 
-	@InitBinder
+	@InitBinder("newCompanhiaInputDto")
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
 				new NomeCompanhiaExistenteValidator(this.companhiaRepository),

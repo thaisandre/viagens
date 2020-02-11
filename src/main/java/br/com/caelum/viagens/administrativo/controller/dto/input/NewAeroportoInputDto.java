@@ -5,11 +5,12 @@ import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-public class NewAeroportoInputDto {
+public class NewAeroportoInputDto implements PossuiPaisDto {
 
 	@NotBlank
 	private String nome;
@@ -17,8 +18,16 @@ public class NewAeroportoInputDto {
 	@NotNull
 	private Long paisId;
 
+	public String getNome() {
+		return nome;
+	}
+
 	public void setNome(String nome) {
 		this.nome = nome;
+	}
+
+	public Long getPaisId() {
+		return paisId;
 	}
 
 	public void setPaisId(Long paisId) {
