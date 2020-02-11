@@ -32,6 +32,8 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 @Transactional
 @ActiveProfiles("test")
 public class PaisControllerTests {
+	
+	private static final String ENDPOINT = "/paises";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -46,12 +48,12 @@ public class PaisControllerTests {
 	}
 	
 	@Test
-	public void deveSalvarNovoPaisQueAindaNaoExiste() throws Exception {
+	public void deveSalvarNovoPaisValidoQueAindaNaoExiste() throws Exception {
 		
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("Chile");
 		
-		RequestBuilder request = post("/paises")
+		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
@@ -66,7 +68,7 @@ public class PaisControllerTests {
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("");
 		
-		RequestBuilder request = post("/paises")
+		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
@@ -83,7 +85,7 @@ public class PaisControllerTests {
 		NewPaisInputDto paisInputDto = new NewPaisInputDto();
 		paisInputDto.setNome("Brasil");
 		
-		RequestBuilder request = post("/paises")
+		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(paisInputDto));
@@ -96,7 +98,7 @@ public class PaisControllerTests {
 	}
 	
 	public void deveRetornarDetalhesDeUmPaisQueExiste() throws Exception {
-		URI uri = new UriTemplate("/paises").expand("1");
+		URI uri = new UriTemplate(ENDPOINT).expand("1");
 		 
 		RequestBuilder request = get(uri)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
@@ -108,7 +110,7 @@ public class PaisControllerTests {
 	}
 	
 	public void deveRetornarStatus404SeIdDoPaisNaoExistir() throws Exception {
-		URI uri = new UriTemplate("/paises").expand("5");
+		URI uri = new UriTemplate(ENDPOINT).expand("5");
 		 
 		RequestBuilder request = get(uri)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
