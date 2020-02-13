@@ -4,7 +4,7 @@ import java.time.Instant;
 
 import br.com.caelum.viagens.administrativo.model.Companhia;
 
-public class CompanhiaOutputDto {
+public class CompanhiaCriadaOutputDto {
 
 	private Long id;
 	
@@ -12,13 +12,13 @@ public class CompanhiaOutputDto {
 	
 	private Instant instanteCriacao;
 	
-	private PaisOutputDto pais;
+	private PaisCriadoOutputDto pais;
 
-	public CompanhiaOutputDto(Companhia companhia) {
+	public CompanhiaCriadaOutputDto(Companhia companhia) {
 		this.id = companhia.getId();
 		this.nome = companhia.getNome();
 		this.instanteCriacao = companhia.getInstanteCriacao();
-		this.pais = new PaisOutputDto(companhia.getPais());		
+		this.pais = new PaisCriadoOutputDto(companhia.getPais());		
 	}
 
 	public Long getId() {
@@ -33,7 +33,7 @@ public class CompanhiaOutputDto {
 		return instanteCriacao;
 	}
 
-	public PaisOutputDto getPais() {
+	public PaisCriadoOutputDto getPais() {
 		return pais;
 	}
 

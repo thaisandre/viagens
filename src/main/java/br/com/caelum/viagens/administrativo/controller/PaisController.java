@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.PaisOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesPaisOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.PaisCriadoOutputDto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
@@ -36,23 +37,23 @@ public class PaisController {
 	}
 
 	@PostMapping
-	public ResponseEntity<PaisOutputDto> cadastro(@Valid @RequestBody NewPaisInputDto newPais, UriComponentsBuilder uriBuilder) {
+	public ResponseEntity<PaisCriadoOutputDto> cadastro(@Valid @RequestBody NewPaisInputDto newPais, UriComponentsBuilder uriBuilder) {
 		Pais pais = newPais.toModel();
 		this.paisRepository.save(pais);
 
 		URI location = uriBuilder.path("/paises/{id}")
 				.buildAndExpand(pais.getId()).toUri();
 
-		return ResponseEntity.created(location).body(new PaisOutputDto(pais));
+		return ResponseEntity.created(location).body(new PaisCriadoOutputDto(pais));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<PaisOutputDto> detalhesPais(@PathVariable("id") Optional<Pais> pais){
+	public ResponseEntity<DetalhesPaisOutputDto> detalhesPais(@PathVariable("id") Optional<Pais> pais){
 		if(!pais.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		return ResponseEntity.ok(new PaisOutputDto(pais.get()));
+		return ResponseEntity.ok(new DetalhesPaisOutputDto(pais.get()));
 		
 	}
 }

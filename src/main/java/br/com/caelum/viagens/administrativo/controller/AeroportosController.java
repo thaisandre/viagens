@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoCriadoOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesAeroportoOutputDto;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
@@ -43,7 +44,7 @@ public class AeroportosController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AeroportoOutputDto> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
+	public ResponseEntity<AeroportoCriadoOutputDto> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
 			UriComponentsBuilder uribuilder){
 		Aeroporto aeroporto = newAeroportoDto.toModel(this.paisRepository);
 		this.aeroportoRepository.save(aeroporto);
@@ -51,14 +52,15 @@ public class AeroportosController {
 		URI location = uribuilder.path("/aeroportos/{id}")
 				.buildAndExpand(aeroporto.getId()).toUri();
 		
-		return ResponseEntity.created(location).body(new AeroportoOutputDto(aeroporto));
+		return ResponseEntity.created(location).body(new AeroportoCriadoOutputDto(aeroporto));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<AeroportoOutputDto> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
+	public ResponseEntity<DetalhesAeroportoOutputDto> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
 		if(!aeroporto.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
-		return ResponseEntity.ok(new AeroportoOutputDto(aeroporto.get()));
+		
+		return ResponseEntity.ok(new DetalhesAeroportoOutputDto(aeroporto.get()));
 	}
 }

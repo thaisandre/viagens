@@ -18,7 +18,8 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaCriadaOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesCompanhiaOutputDto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
@@ -43,7 +44,7 @@ public class CompanhiasController {
 	}
 
 	@PostMapping
-	public ResponseEntity<CompanhiaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
+	public ResponseEntity<CompanhiaCriadaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
 			UriComponentsBuilder uriBuilder) {
 		Companhia companhia = newCompanhiaDto.toModel(this.paisRepository);
 		this.companhiaRepository.save(companhia);
@@ -51,15 +52,15 @@ public class CompanhiasController {
 		URI location = uriBuilder.path("/companhias/{id}")
 				.buildAndExpand(companhia.getId()).toUri();
 		
-		return ResponseEntity.created(location).body(new CompanhiaOutputDto(companhia));
+		return ResponseEntity.created(location).body(new CompanhiaCriadaOutputDto(companhia));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<CompanhiaOutputDto> detalhes(@PathVariable("id") Optional<Companhia> companhia){
+	public ResponseEntity<DetalhesCompanhiaOutputDto> detalhes(@PathVariable("id") Optional<Companhia> companhia){
 		if(!companhia.isPresent()) {
 			return ResponseEntity.notFound().build();
 		}
 		
-		return ResponseEntity.ok(new CompanhiaOutputDto(companhia.get()));
+		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(companhia.get()));
 	}
 }

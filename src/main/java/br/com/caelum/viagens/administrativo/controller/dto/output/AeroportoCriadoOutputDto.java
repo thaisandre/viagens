@@ -2,18 +2,18 @@ package br.com.caelum.viagens.administrativo.controller.dto.output;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 
-public class AeroportoOutputDto {
+public class AeroportoCriadoOutputDto {
 
 	private Long id;
 
 	private String nome;
 
-	private PaisOutputDto pais;
+	private PaisCriadoOutputDto pais;
 	
-	public AeroportoOutputDto(Aeroporto aeroporto) {
+	public AeroportoCriadoOutputDto(Aeroporto aeroporto) {
 		this.id = aeroporto.getId();
 		this.nome = aeroporto.getNome();
-		this.pais = new PaisOutputDto(aeroporto.getPais());
+		this.pais = new PaisCriadoOutputDto(aeroporto.getPais());
 	}
 
 	public Long getId() {
@@ -24,7 +24,7 @@ public class AeroportoOutputDto {
 		return nome;
 	}
 
-	public PaisOutputDto getPais() {
+	public PaisCriadoOutputDto getPais() {
 		return pais;
 	}
 
