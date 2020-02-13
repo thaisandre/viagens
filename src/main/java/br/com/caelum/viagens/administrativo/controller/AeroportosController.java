@@ -20,11 +20,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoCriadoOutputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesAeroportoOutputDto;
+import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
-import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/aeroportos")
@@ -36,11 +36,10 @@ public class AeroportosController {
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
 	
-	@InitBinder("newAeroportoInputDto")
+	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
-				new NomeAeroportoExistenteValidator(aeroportoRepository),
-				new PaisNaoExistenteValidator(paisRepository));
+				new NomeAeroportoExistenteValidator(aeroportoRepository));
 	}
 
 	@PostMapping
@@ -57,10 +56,8 @@ public class AeroportosController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesAeroportoOutputDto> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
-		if(!aeroporto.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(new DetalhesAeroportoOutputDto(aeroporto.get()));
+		return ResponseEntity.ok(
+				new DetalhesAeroportoOutputDto(aeroporto.orElseThrow(
+						() -> new ResourceNotFoundException("Recurso não encontrado."))));
 	}
 }

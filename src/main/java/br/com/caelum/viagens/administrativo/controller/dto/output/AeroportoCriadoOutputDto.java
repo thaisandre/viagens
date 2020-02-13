@@ -8,12 +8,12 @@ public class AeroportoCriadoOutputDto {
 
 	private String nome;
 
-	private PaisCriadoOutputDto pais;
+	private PaisDoAeroportoCriadoOutputDto pais;
 	
 	public AeroportoCriadoOutputDto(Aeroporto aeroporto) {
 		this.id = aeroporto.getId();
 		this.nome = aeroporto.getNome();
-		this.pais = new PaisCriadoOutputDto(aeroporto.getPais());
+		this.pais = new PaisDoAeroportoCriadoOutputDto(aeroporto.getPais());
 	}
 
 	public Long getId() {
@@ -24,7 +24,7 @@ public class AeroportoCriadoOutputDto {
 		return nome;
 	}
 
-	public PaisCriadoOutputDto getPais() {
+	public PaisDoAeroportoCriadoOutputDto getPais() {
 		return pais;
 	}
 

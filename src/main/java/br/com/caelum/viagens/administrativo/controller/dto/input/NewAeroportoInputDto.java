@@ -1,16 +1,14 @@
 package br.com.caelum.viagens.administrativo.controller.dto.input;
 
-import java.util.Optional;
-
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
-import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
+import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-public class NewAeroportoInputDto implements PossuiPaisDto {
+public class NewAeroportoInputDto {
 
 	@NotBlank
 	private String nome;
@@ -26,17 +24,18 @@ public class NewAeroportoInputDto implements PossuiPaisDto {
 		this.nome = nome;
 	}
 
+	public void setPaisId(Long paisId) {
+		this.paisId = paisId;
+	}
+	
 	public Long getPaisId() {
 		return paisId;
 	}
 
-	public void setPaisId(Long paisId) {
-		this.paisId = paisId;
-	}
-
 	public Aeroporto toModel(PaisRepository paisRepository) {
-		Optional<Pais> pais = paisRepository.findById(this.paisId);
-		return new Aeroporto(this.nome, pais.get());
+		Pais pais = paisRepository.findById(this.paisId).orElseThrow(() -> 
+			new ResourceNotFoundException("paisId não encontrado."));
+		return new Aeroporto(this.nome, pais);
 	}
 
 }

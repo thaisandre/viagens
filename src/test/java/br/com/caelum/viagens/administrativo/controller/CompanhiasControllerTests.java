@@ -5,13 +5,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.net.URI;
-
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +31,7 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class CompanhiasControllerTests {
 	
 	private static final String ENDPOINT = "/companhias";
@@ -55,6 +54,8 @@ public class CompanhiasControllerTests {
 		this.argentina = this.paisRepository.save(new Pais("Argentina"));
 		this.brasil = this.paisRepository.save(new Pais("Brasil"));
 		this.companhiaA = this.companhiaRepository.save(new Companhia("CompanhiaA", this.argentina));
+		System.out.println("COMPANHIA " + companhiaA.getNome());
+		System.out.println(companhiaA.getId());
 	}
 	
 	@Test
@@ -141,16 +142,14 @@ public class CompanhiasControllerTests {
 				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
 				
 		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("paisId"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("País não existe no sistema."));
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("$.mensagem").value("paisId não encontrado."));
 	}
 	
+	@Test
 	public void deveRetornarDetalhesDeUmaCompanhiaQueExiste() throws Exception {
-		URI uri = new UriTemplate(ENDPOINT).expand(this.companhiaA.getId().toString());
-		 
-		RequestBuilder request = get(uri)
+		
+		RequestBuilder request = get(ENDPOINT + "/" + this.companhiaA.getId())
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
@@ -161,13 +160,14 @@ public class CompanhiasControllerTests {
 			.andExpect(jsonPath("$.pais.nome").value(this.argentina.getNome()));
 	}
 	
+	@Test
 	public void deveRetornarStatus404SeIdDaCompanhiaNaoExistir() throws Exception {
-		URI uri = new UriTemplate("/paises").expand("5");
 		
-		RequestBuilder request = get(uri)
+		RequestBuilder request = get(ENDPOINT + "/45")
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
+		
 			.andExpect(status().isNotFound());
 	}
 }

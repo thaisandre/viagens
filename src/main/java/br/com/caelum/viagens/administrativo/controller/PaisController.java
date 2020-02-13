@@ -20,6 +20,7 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesPaisOutputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.PaisCriadoOutputDto;
+import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
@@ -31,7 +32,7 @@ public class PaisController {
 	@Autowired
 	private PaisRepository paisRepository;
 
-	@InitBinder("newPaisInputDto")
+	@InitBinder()
 	public void InitBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(new PaisExistenteValidator(this.paisRepository));
 	}
@@ -49,11 +50,7 @@ public class PaisController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesPaisOutputDto> detalhesPais(@PathVariable("id") Optional<Pais> pais){
-		if(!pais.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(new DetalhesPaisOutputDto(pais.get()));
-		
+		return ResponseEntity.ok(new DetalhesPaisOutputDto(pais.orElseThrow(() -> 
+				new ResourceNotFoundException("Recurso não encontrado."))));
 	}
 }

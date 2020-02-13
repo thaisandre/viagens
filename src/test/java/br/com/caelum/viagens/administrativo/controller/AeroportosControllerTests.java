@@ -5,13 +5,12 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
-import java.net.URI;
-
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -19,7 +18,6 @@ import org.springframework.http.MediaType;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
-import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
@@ -33,6 +31,7 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
+@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class AeroportosControllerTests {
 	
 	private static final String ENDPOINT = "/aeroportos";
@@ -142,16 +141,14 @@ public class AeroportosControllerTests {
 				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("paisId"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("País não existe no sistema."));
+			.andExpect(status().isNotFound())
+			.andExpect(jsonPath("mensagem").value("paisId não encontrado."));
 	}
 	
+	@Test
 	public void deveRetornarDetalhesDeUmAeroportoQueExiste() throws Exception {
-		URI uri = new UriTemplate(ENDPOINT).expand(this.aeroportoA.getId().toString());
 		 
-		RequestBuilder request = get(uri)
+		RequestBuilder request = get(ENDPOINT + "/" + this.aeroportoA.getId())
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
@@ -162,10 +159,10 @@ public class AeroportosControllerTests {
 			.andExpect(jsonPath("$.pais.nome").value(this.argentina.getNome()));
 	}
 	
+	@Test
 	public void deveRetornarStatus404SeIdDoAeroportoNaoExistir() throws Exception {
-		URI uri = new UriTemplate("/paises").expand("5");
 		
-		RequestBuilder request = get(uri)
+		RequestBuilder request = get(ENDPOINT + "/5")
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)

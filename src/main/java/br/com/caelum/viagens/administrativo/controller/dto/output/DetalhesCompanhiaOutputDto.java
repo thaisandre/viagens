@@ -12,13 +12,13 @@ private Long id;
 	
 	private Instant instanteCriacao;
 	
-	private PaisCriadoOutputDto pais;
+	private DetalhesPaisOutputDto pais;
 
 	public DetalhesCompanhiaOutputDto(Companhia companhia) {
 		this.id = companhia.getId();
 		this.nome = companhia.getNome();
 		this.instanteCriacao = companhia.getInstanteCriacao();
-		this.pais = new PaisCriadoOutputDto(companhia.getPais());		
+		this.pais = new DetalhesPaisOutputDto(companhia.getPais());		
 	}
 
 	public Long getId() {
@@ -33,7 +33,7 @@ private Long id;
 		return instanteCriacao;
 	}
 
-	public PaisCriadoOutputDto getPais() {
+	public DetalhesPaisOutputDto getPais() {
 		return pais;
 	}
 }

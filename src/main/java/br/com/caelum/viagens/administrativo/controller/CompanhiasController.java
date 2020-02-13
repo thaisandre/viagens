@@ -20,11 +20,11 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaCriadaOutputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesCompanhiaOutputDto;
+import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
-import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/companhias")
@@ -36,12 +36,11 @@ public class CompanhiasController {
 	@Autowired
 	private CompanhiaRepository companhiaRepository;
 
-	@InitBinder("newCompanhiaInputDto")
+	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
-				new NomeCompanhiaExistenteValidator(this.companhiaRepository),
-				new PaisNaoExistenteValidator(this.paisRepository));
-	}
+				new NomeCompanhiaExistenteValidator(this.companhiaRepository));
+		}
 
 	@PostMapping
 	public ResponseEntity<CompanhiaCriadaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
@@ -57,10 +56,7 @@ public class CompanhiasController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesCompanhiaOutputDto> detalhes(@PathVariable("id") Optional<Companhia> companhia){
-		if(!companhia.isPresent()) {
-			return ResponseEntity.notFound().build();
-		}
-		
-		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(companhia.get()));
+		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(companhia.orElseThrow(
+				() -> new ResourceNotFoundException("Recurso não encontrado."))));
 	}
 }

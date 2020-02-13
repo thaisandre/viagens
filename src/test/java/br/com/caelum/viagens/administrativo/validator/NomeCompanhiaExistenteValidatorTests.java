@@ -1,14 +1,13 @@
 package br.com.caelum.viagens.administrativo.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
 
-import javax.transaction.Transactional;
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.ActiveProfiles;
+import org.mockito.Mockito;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 
@@ -16,27 +15,18 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInp
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
-import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-@SpringBootTest
-@Transactional
-@ActiveProfiles("test")
 public class NomeCompanhiaExistenteValidatorTests {
 	
-	@Autowired
 	private CompanhiaRepository companhiaRepository;
-	
-	@Autowired
-	private PaisRepository paisRepository;
-	
 	private NomeCompanhiaExistenteValidator validator;
-	
-	private Pais argentina;
 	
 	@BeforeEach
 	public void setUp() {
-		this.argentina = this.paisRepository.save(new Pais("Argentina"));
-		this.companhiaRepository.save(new Companhia("CompanhiaA", this.argentina));
+		this.companhiaRepository = Mockito.mock(CompanhiaRepository.class);
+		Companhia companhia = new Companhia("CompanhiaA", new Pais("Argentina"));
+		when(this.companhiaRepository.findByNome("CompanhiaA")).thenReturn(Optional.of(companhia));
+		
 		this.validator = new NomeCompanhiaExistenteValidator(this.companhiaRepository);
 	}
 	

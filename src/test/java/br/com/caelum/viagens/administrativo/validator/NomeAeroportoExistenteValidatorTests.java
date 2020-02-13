@@ -1,10 +1,13 @@
 package br.com.caelum.viagens.administrativo.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.Mockito.when;
+
+import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.springframework.beans.factory.annotation.Autowired;
+import org.mockito.Mockito;
 import org.springframework.validation.BeanPropertyBindingResult;
 import org.springframework.validation.BindingResult;
 
@@ -12,24 +15,18 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInp
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
-import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
 public class NomeAeroportoExistenteValidatorTests {
 	
-	@Autowired
 	private AeroportoRepository aeroportoRepository;
-	
-	@Autowired
-	private PaisRepository paisRepository;
-	
 	private NomeAeroportoExistenteValidator validator;
-	
-	private Pais argentina;
-	
+		
 	@BeforeEach
 	public void setUp() {
-		this.argentina = this.paisRepository.save(new Pais("Argentina"));
-		this.aeroportoRepository.save(new Aeroporto("AeroportoA", this.argentina));
+		this.aeroportoRepository = Mockito.mock(AeroportoRepository.class);
+		Aeroporto aeroporto = new Aeroporto("AeroportoA", new Pais("Argentina"));
+		when(this.aeroportoRepository.findByNome("AeroportoA")).thenReturn(Optional.of(aeroporto));
+
 		this.validator = new NomeAeroportoExistenteValidator(this.aeroportoRepository);
 	}
 	
