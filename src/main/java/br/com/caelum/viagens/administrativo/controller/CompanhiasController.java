@@ -20,10 +20,10 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaCriadaOutputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesCompanhiaOutputDto;
-import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
+import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
 
 @RestController
@@ -56,7 +56,6 @@ public class CompanhiasController {
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesCompanhiaOutputDto> detalhes(@PathVariable("id") Optional<Companhia> companhia){
-		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(companhia.orElseThrow(
-				() -> new ResourceNotFoundException("Recurso não encontrado."))));
+		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(IfResourceIsFound.of(companhia)));
 	}
 }

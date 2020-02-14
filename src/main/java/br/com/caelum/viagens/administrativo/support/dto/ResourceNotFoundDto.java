@@ -1,4 +1,4 @@
-package br.com.caelum.viagens.administrativo.handler.dto;
+package br.com.caelum.viagens.administrativo.support.dto;
 
 public class ResourceNotFoundDto {
 	

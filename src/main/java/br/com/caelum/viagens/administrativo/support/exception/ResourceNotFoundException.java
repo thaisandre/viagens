@@ -1,4 +1,4 @@
-package br.com.caelum.viagens.administrativo.exception;
+package br.com.caelum.viagens.administrativo.support.exception;
 
 public class ResourceNotFoundException extends RuntimeException {
 

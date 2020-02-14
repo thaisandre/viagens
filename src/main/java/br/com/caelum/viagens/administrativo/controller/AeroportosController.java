@@ -20,44 +20,41 @@ import org.springframework.web.util.UriComponentsBuilder;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoCriadoOutputDto;
 import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesAeroportoOutputDto;
-import br.com.caelum.viagens.administrativo.exception.ResourceNotFoundException;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
+import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
 
 @RestController
 @RequestMapping("/aeroportos")
 public class AeroportosController {
-	
+
 	@Autowired
-	private PaisRepository paisRepository;
-	
+	public PaisRepository paisRepository;
 	@Autowired
-	private AeroportoRepository aeroportoRepository;
-	
+	public AeroportoRepository aeroportoRepository;
+
 	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
-		webDataBinder.addValidators(
-				new NomeAeroportoExistenteValidator(aeroportoRepository));
+		webDataBinder.addValidators(new NomeAeroportoExistenteValidator(aeroportoRepository));
 	}
 
 	@PostMapping
 	public ResponseEntity<AeroportoCriadoOutputDto> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
-			UriComponentsBuilder uribuilder){
+			UriComponentsBuilder uribuilder) {
 		Aeroporto aeroporto = newAeroportoDto.toModel(this.paisRepository);
 		this.aeroportoRepository.save(aeroporto);
-		
-		URI location = uribuilder.path("/aeroportos/{id}")
-				.buildAndExpand(aeroporto.getId()).toUri();
-		
+
+		URI location = uribuilder.path("/aeroportos/{id}").buildAndExpand(aeroporto.getId()).toUri();
+
 		return ResponseEntity.created(location).body(new AeroportoCriadoOutputDto(aeroporto));
+
 	}
-	
+
 	@GetMapping("/{id}")
 	public ResponseEntity<DetalhesAeroportoOutputDto> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
-		return ResponseEntity.ok(
-				new DetalhesAeroportoOutputDto(aeroporto.orElseThrow(
-						() -> new ResourceNotFoundException("Recurso não encontrado."))));
+		return  ResponseEntity.ok(new DetalhesAeroportoOutputDto(IfResourceIsFound.of(aeroporto)));
 	}
+
 }

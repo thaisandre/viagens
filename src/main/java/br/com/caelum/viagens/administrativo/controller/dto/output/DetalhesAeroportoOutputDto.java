@@ -27,4 +27,5 @@ public class DetalhesAeroportoOutputDto {
 	public DetalhesPaisOutputDto getPais() {
 		return pais;
 	}
+
 }
