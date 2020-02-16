@@ -6,6 +6,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.validation.constraints.NotBlank;
 
+import org.springframework.util.Assert;
+
 @Entity
 public class Pais {
 	
@@ -20,6 +22,7 @@ public class Pais {
 	public Pais() {}
 
 	public Pais(@NotBlank String nome) {
+		Assert.hasText(nome, "nome não pode ser vazio.");
 		this.nome = nome;
 	}
 

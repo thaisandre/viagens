@@ -25,6 +25,7 @@ import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
+import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/companhias")
@@ -39,7 +40,8 @@ public class CompanhiasController {
 	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
-				new NomeCompanhiaExistenteValidator(this.companhiaRepository));
+				new NomeCompanhiaExistenteValidator(this.companhiaRepository),
+				new PaisNaoExistenteValidator(paisRepository));
 		}
 
 	@PostMapping

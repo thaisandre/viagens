@@ -142,8 +142,10 @@ public class CompanhiasControllerTests {
 				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
 				
 		mockMvc.perform(request)
-			.andExpect(status().isNotFound())
-			.andExpect(jsonPath("$.mensagem").value("paisId não encontrado."));
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("paisId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("País não existe no sistema."));
 	}
 	
 	@Test

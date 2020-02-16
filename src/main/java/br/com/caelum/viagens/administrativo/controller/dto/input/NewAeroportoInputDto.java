@@ -5,12 +5,12 @@ import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 
-public class NewAeroportoInputDto {
+public class NewAeroportoInputDto implements PossuiPaisDto {
 
 	@NotBlank
 	private String nome;
@@ -36,7 +36,7 @@ public class NewAeroportoInputDto {
 
 	public Aeroporto toModel(PaisRepository paisRepository) {
 		Optional<Pais> pais = paisRepository.findById(this.paisId);
-		return new Aeroporto(this.nome, IfResourceIsFound.of(pais, "paisId não encontrado."));
+		return new Aeroporto(this.nome, pais.get());
 	}
 
 }

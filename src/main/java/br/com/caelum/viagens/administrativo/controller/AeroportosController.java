@@ -25,6 +25,7 @@ import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
+import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
 
 @RestController
 @RequestMapping("/aeroportos")
@@ -37,7 +38,9 @@ public class AeroportosController {
 
 	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
-		webDataBinder.addValidators(new NomeAeroportoExistenteValidator(aeroportoRepository));
+		webDataBinder.addValidators(
+				new NomeAeroportoExistenteValidator(aeroportoRepository),
+				new PaisNaoExistenteValidator(paisRepository));
 	}
 
 	@PostMapping

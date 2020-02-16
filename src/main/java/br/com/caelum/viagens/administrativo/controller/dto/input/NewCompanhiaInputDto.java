@@ -5,12 +5,12 @@ import java.util.Optional;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 
-public class NewCompanhiaInputDto {
+public class NewCompanhiaInputDto implements PossuiPaisDto{
 
 	@NotBlank
 	private String nome;
@@ -36,6 +36,6 @@ public class NewCompanhiaInputDto {
 
 	public Companhia toModel(PaisRepository paisRepository) {
 		Optional<Pais> pais = paisRepository.findById(this.paisId);
-		return new Companhia(this.nome, IfResourceIsFound.of(pais, "paisId não encontrado."));
+		return new Companhia(this.nome, pais.get());
 	}
 }

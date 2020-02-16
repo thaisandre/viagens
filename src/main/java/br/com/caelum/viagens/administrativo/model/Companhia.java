@@ -10,6 +10,8 @@ import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
+import org.springframework.util.Assert;
+
 @Entity
 public class Companhia {
 
@@ -32,6 +34,8 @@ public class Companhia {
 	}
 
 	public Companhia(@NotBlank String nome, @NotNull Pais pais) {
+		Assert.hasText(nome, "nome não pode ser vazio.");
+		Assert.notNull(pais, "pais não pode ser nulo.");
 		this.nome = nome;
 		this.pais = pais;
 	}
