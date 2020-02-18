@@ -10,12 +10,12 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewRotaInputDto
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 
-public class AeroportoOrigemEDestinoNaoExistentesValidator implements Validator{
+public class AeroportosOrigemEDestinoNaoExistentesValidator implements Validator{
 	
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
 	
-	public AeroportoOrigemEDestinoNaoExistentesValidator(AeroportoRepository aeroportoRepository) {
+	public AeroportosOrigemEDestinoNaoExistentesValidator(AeroportoRepository aeroportoRepository) {
 		this.aeroportoRepository = aeroportoRepository;
 	}
 	

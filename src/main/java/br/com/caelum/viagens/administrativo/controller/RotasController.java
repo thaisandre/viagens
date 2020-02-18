@@ -24,7 +24,7 @@ import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
-import br.com.caelum.viagens.administrativo.validator.AeroportoOrigemEDestinoNaoExistentesValidator;
+import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoNaoExistentesValidator;
 import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoDiferentesValidator;
 
 @RequestMapping("/rotas")
@@ -40,7 +40,7 @@ public class RotasController {
 	@InitBinder
 	public void InitBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
-				new AeroportoOrigemEDestinoNaoExistentesValidator(aeroportoRepository),
+				new AeroportosOrigemEDestinoNaoExistentesValidator(aeroportoRepository),
 				new AeroportosOrigemEDestinoDiferentesValidator());
 	}
 	
