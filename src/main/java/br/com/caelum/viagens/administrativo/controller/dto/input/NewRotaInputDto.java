@@ -48,6 +48,10 @@ public class NewRotaInputDto {
 	public Long getDestinoId() {
 		return this.destinoId;
 	}
+	
+	public Integer getDuracao() {
+		return duracao;
+	}
 
 	public Rota toModel(AeroportoRepository aeroportoRepository) {
 		Optional<Aeroporto> aeroportoOrigem = aeroportoRepository.findById(this.origemId);
