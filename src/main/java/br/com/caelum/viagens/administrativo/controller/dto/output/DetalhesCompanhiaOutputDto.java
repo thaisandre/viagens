@@ -3,23 +3,22 @@ package br.com.caelum.viagens.administrativo.controller.dto.output;
 import java.time.Instant;
 
 import br.com.caelum.viagens.administrativo.model.Companhia;
-import br.com.caelum.viagens.administrativo.model.Pais;
 
-public class CompanhiaOutputDto {
-
-	private Long id;
+public class DetalhesCompanhiaOutputDto {
+	
+private Long id;
 	
 	private String nome;
 	
 	private Instant instanteCriacao;
 	
-	private Pais pais;
+	private DetalhesPaisOutputDto pais;
 
-	public CompanhiaOutputDto(Companhia companhia) {
+	public DetalhesCompanhiaOutputDto(Companhia companhia) {
 		this.id = companhia.getId();
 		this.nome = companhia.getNome();
 		this.instanteCriacao = companhia.getInstanteCriacao();
-		this.pais = companhia.getPais();		
+		this.pais = new DetalhesPaisOutputDto(companhia.getPais());		
 	}
 
 	public Long getId() {
@@ -34,8 +33,7 @@ public class CompanhiaOutputDto {
 		return instanteCriacao;
 	}
 
-	public Pais getPais() {
+	public DetalhesPaisOutputDto getPais() {
 		return pais;
 	}
-
 }

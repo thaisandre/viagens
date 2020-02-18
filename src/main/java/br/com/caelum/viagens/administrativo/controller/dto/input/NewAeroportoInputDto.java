@@ -6,11 +6,11 @@ import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 import br.com.caelum.viagens.administrativo.controller.dto.PossuiPaisDto;
-import br.com.caelum.viagens.administrativo.model.Companhia;
+import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
-public class NewCompanhiaInputDto implements PossuiPaisDto{
+public class NewAeroportoInputDto implements PossuiPaisDto {
 
 	@NotBlank
 	private String nome;
@@ -29,13 +29,14 @@ public class NewCompanhiaInputDto implements PossuiPaisDto{
 	public void setPaisId(Long paisId) {
 		this.paisId = paisId;
 	}
-	
+
 	public Long getPaisId() {
 		return paisId;
 	}
 
-	public Companhia toModel(PaisRepository paisRepository) {
+	public Aeroporto toModel(PaisRepository paisRepository) {
 		Optional<Pais> pais = paisRepository.findById(this.paisId);
-		return new Companhia(this.nome, pais.get());
+		return new Aeroporto(this.nome, pais.get());
 	}
+
 }

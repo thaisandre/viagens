@@ -2,12 +2,12 @@ package br.com.caelum.viagens.administrativo.controller.dto.output;
 
 import br.com.caelum.viagens.administrativo.model.Pais;
 
-public class PaisOutputDto {
+public class PaisCriadoOutputDto {
 
 	private Long id;
 	private String nome;
 
-	public PaisOutputDto(Pais pais) {
+	public PaisCriadoOutputDto(Pais pais) {
 		this.id = pais.getId();
 		this.nome = pais.getNome();
 	}

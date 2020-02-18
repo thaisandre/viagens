@@ -1,7 +1,5 @@
 package br.com.caelum.viagens.administrativo.model;
 
-import java.time.Instant;
-
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -13,7 +11,7 @@ import javax.validation.constraints.NotNull;
 import org.springframework.util.Assert;
 
 @Entity
-public class Companhia {
+public class Aeroporto {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,18 +20,15 @@ public class Companhia {
 	@NotBlank
 	private String nome;
 
-	@NotNull
-	private Instant instanteCriacao = Instant.now();
-
 	@ManyToOne
 	@NotNull
 	private Pais pais;
 
 	@Deprecated
-	public Companhia() {
+	public Aeroporto() {
 	}
 
-	public Companhia(@NotBlank String nome, @NotNull Pais pais) {
+	public Aeroporto(@NotBlank String nome, @NotNull Pais pais) {
 		Assert.hasText(nome, "nome não pode ser vazio.");
 		Assert.notNull(pais, "pais não pode ser nulo.");
 		this.nome = nome;
@@ -46,10 +41,6 @@ public class Companhia {
 
 	public String getNome() {
 		return nome;
-	}
-
-	public Instant getInstanteCriacao() {
-		return instanteCriacao;
 	}
 
 	public Pais getPais() {

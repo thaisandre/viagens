@@ -1,4 +1,4 @@
-package br.com.caelum.viagens.administrativo.handler.dto;
+package br.com.caelum.viagens.administrativo.support.dto;
 
 import java.util.ArrayList;
 import java.util.List;

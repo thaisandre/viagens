@@ -21,10 +21,10 @@ import org.springframework.test.web.servlet.RequestBuilder;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 
-import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInputDto;
-import br.com.caelum.viagens.administrativo.model.Companhia;
+import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInputDto;
+import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
-import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
+import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 
 @SpringBootTest
@@ -32,9 +32,9 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 @Transactional
 @ActiveProfiles("test")
 @AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
-public class CompanhiasControllerTests {
+public class AeroportosControllerTests {
 	
-	private static final String ENDPOINT = "/companhias";
+	private static final String ENDPOINT = "/aeroportos";
 
 	@Autowired
 	private MockMvc mockMvc;
@@ -43,50 +43,48 @@ public class CompanhiasControllerTests {
 	private PaisRepository paisRepository;
 	
 	@Autowired
-	private CompanhiaRepository companhiaRepository;
+	private AeroportoRepository aeroportoRepository;
 
 	private Pais argentina;
 	private Pais brasil;
-	private Companhia companhiaA;
+	private Aeroporto aeroportoA;
 	
 	@BeforeEach
 	public void setUp() {
 		this.argentina = this.paisRepository.save(new Pais("Argentina"));
 		this.brasil = this.paisRepository.save(new Pais("Brasil"));
-		this.companhiaA = this.companhiaRepository.save(new Companhia("CompanhiaA", this.argentina));
-		System.out.println("COMPANHIA " + companhiaA.getNome());
-		System.out.println(companhiaA.getId());
+		this.aeroportoA = this.aeroportoRepository.save(new Aeroporto("AeroportoA", this.argentina));
 	}
 	
 	@Test
-	public void deveSalvarNovaCompanhiaValidaQueAindaNaoExiste() throws Exception {
+	public void deveSalvarNovAeroportoValidoQueAindaNaoExiste() throws Exception {
 		
-		NewCompanhiaInputDto companhiaInputDto = new NewCompanhiaInputDto();
-		companhiaInputDto.setNome("CompanhiaB");
-		companhiaInputDto.setPaisId(this.argentina.getId());
+		NewAeroportoInputDto aeroportoInputDto = new NewAeroportoInputDto();
+		aeroportoInputDto.setNome("AeroportoB");
+		aeroportoInputDto.setPaisId(this.argentina.getId());
 		
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
+				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.nome").value("CompanhiaB"))
+			.andExpect(jsonPath("$.nome").value("AeroportoB"))
 			.andExpect(jsonPath("$.pais.id").value(argentina.getId()))
 			.andExpect(jsonPath("$.pais.nome").value(argentina.getNome()));
 	}
 	
 	@Test
-	public void deveRejeitarCadastroDeCompanhiaComNomeVazio() throws Exception {
-		NewCompanhiaInputDto companhiaInputDto = new NewCompanhiaInputDto();
-		companhiaInputDto.setNome("");
-		companhiaInputDto.setPaisId(brasil.getId());
+	public void deveRejeitarCadastroDeAeroportoComNomeVazio() throws Exception {
+		NewAeroportoInputDto aeroportoInputDto = new NewAeroportoInputDto();
+		aeroportoInputDto.setNome("");
+		aeroportoInputDto.setPaisId(this.brasil.getId());
 		
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
+				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
@@ -96,32 +94,33 @@ public class CompanhiasControllerTests {
 	}
 	
 	@Test
-	public void deveRejeitarCadastroDeCompanhiaComNomeQueJaExiste() throws Exception {
-		NewCompanhiaInputDto companhiaInputDto = new NewCompanhiaInputDto();
-		companhiaInputDto.setNome(this.companhiaA.getNome());
-		companhiaInputDto.setPaisId(this.brasil.getId());
+	public void deveRejeitarCadastroDeAeroportoComNomeQueJaExiste() throws Exception {
+		
+		NewAeroportoInputDto aeroportoInputDto = new NewAeroportoInputDto();
+		aeroportoInputDto.setNome(this.aeroportoA.getNome());
+		aeroportoInputDto.setPaisId(this.brasil.getId());
 		
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
+				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("nome"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("Companhia de mesmo nome já existe no sistema."));
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("Aeroporto de mesmo nome já existe no sistema."));
 	}
 	
 	@Test
-	public void deveRejeitarCadastroDeCompanhiaSemUmPais() throws Exception {
-		NewCompanhiaInputDto companhiaInputDto = new NewCompanhiaInputDto();
-		companhiaInputDto.setNome("CompanhiaB");
+	public void deveRejeitarCadastroDeAeroportoSemUmPais() throws Exception {
+		NewAeroportoInputDto aeroportoInputDto = new NewAeroportoInputDto();
+		aeroportoInputDto.setNome("AeroportoB");
 		
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
+				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
@@ -131,15 +130,15 @@ public class CompanhiasControllerTests {
 	}
 	
 	@Test
-	public void deveRejeitarCadastroDeCompanhiaComPaisQueNaoExiste() throws Exception {
-		NewCompanhiaInputDto companhiaInputDto = new NewCompanhiaInputDto();
-		companhiaInputDto.setNome("CompanhiaB");
-		companhiaInputDto.setPaisId(20L);
+	public void deveRejeitarCadastroDeAeroportoComPaisQueNaoExiste() throws Exception {
+		NewAeroportoInputDto aeroportoInputDto = new NewAeroportoInputDto();
+		aeroportoInputDto.setNome("AeroportoB");
+		aeroportoInputDto.setPaisId(20L);
 		
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(new ObjectMapper().writeValueAsString(companhiaInputDto));
+				.content(new ObjectMapper().writeValueAsString(aeroportoInputDto));
 				
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
@@ -149,27 +148,26 @@ public class CompanhiasControllerTests {
 	}
 	
 	@Test
-	public void deveRetornarDetalhesDeUmaCompanhiaQueExiste() throws Exception {
-		
-		RequestBuilder request = get(ENDPOINT + "/" + this.companhiaA.getId())
+	public void deveRetornarDetalhesDeUmAeroportoQueExiste() throws Exception {
+		 
+		RequestBuilder request = get(ENDPOINT + "/" + this.aeroportoA.getId())
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(this.companhiaA.getId()))
-			.andExpect(jsonPath("$.nome").value(this.companhiaA.getNome()))
+			.andExpect(jsonPath("$.id").value(this.aeroportoA.getId()))
+			.andExpect(jsonPath("$.nome").value(this.aeroportoA.getNome()))
 			.andExpect(jsonPath("$.pais.id").value(this.argentina.getId()))
 			.andExpect(jsonPath("$.pais.nome").value(this.argentina.getNome()));
 	}
 	
 	@Test
-	public void deveRetornarStatus404SeIdDaCompanhiaNaoExistir() throws Exception {
+	public void deveRetornarStatus404SeIdDoAeroportoNaoExistir() throws Exception {
 		
-		RequestBuilder request = get(ENDPOINT + "/45")
+		RequestBuilder request = get(ENDPOINT + "/5")
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
-		
 			.andExpect(status().isNotFound());
 	}
 }
