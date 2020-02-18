@@ -36,7 +36,7 @@ public class AeroportosController {
 	@Autowired
 	public AeroportoRepository aeroportoRepository;
 
-	@InitBinder()
+	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
 				new NomeAeroportoExistenteValidator(aeroportoRepository),
