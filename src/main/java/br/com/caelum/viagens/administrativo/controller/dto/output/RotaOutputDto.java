@@ -7,7 +7,7 @@ import io.github.asouza.DataView;
 
 public class RotaOutputDto {
 	
-	public static Map<String, Object> rotaCriada(Rota rota){ 
+	public static Map<String, Object> criado(Rota rota){ 
 		return DataView.of(rota)
 			.add(Rota::getId)
 			.add(Rota::getNome)
@@ -17,7 +17,7 @@ public class RotaOutputDto {
 			.build();
 	}
 	
-	public static Map<String, Object> detalhesRota(Rota rota){
+	public static Map<String, Object> detalhes(Rota rota){
 		return DataView.of(rota)
 				.add(Rota::getId)
 				.add(Rota::getNome)
@@ -26,8 +26,4 @@ public class RotaOutputDto {
 				.add(Rota::getDuracao)
 				.build();
 	}
-	
-	
-	
-
 }

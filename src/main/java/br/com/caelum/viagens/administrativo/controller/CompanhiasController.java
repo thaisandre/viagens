@@ -1,6 +1,7 @@
 package br.com.caelum.viagens.administrativo.controller;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -18,8 +19,7 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewCompanhiaInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaCriadaOutputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesCompanhiaOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaOutputDto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
@@ -45,7 +45,7 @@ public class CompanhiasController {
 		}
 
 	@PostMapping
-	public ResponseEntity<CompanhiaCriadaOutputDto> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
+	public ResponseEntity<Map<String, Object>> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
 			UriComponentsBuilder uriBuilder) {
 		Companhia companhia = newCompanhiaDto.toModel(this.paisRepository);
 		this.companhiaRepository.save(companhia);
@@ -53,11 +53,11 @@ public class CompanhiasController {
 		URI location = uriBuilder.path("/companhias/{id}")
 				.buildAndExpand(companhia.getId()).toUri();
 		
-		return ResponseEntity.created(location).body(new CompanhiaCriadaOutputDto(companhia));
+		return ResponseEntity.created(location).body(CompanhiaOutputDto.criado(companhia));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<DetalhesCompanhiaOutputDto> detalhes(@PathVariable("id") Optional<Companhia> companhia){
-		return ResponseEntity.ok(new DetalhesCompanhiaOutputDto(IfResourceIsFound.of(companhia)));
+	public ResponseEntity<Map<String, Object>> detalhes(@PathVariable("id") Optional<Companhia> companhia){
+		return ResponseEntity.ok(CompanhiaOutputDto.detalhes(IfResourceIsFound.of(companhia)));
 	}
 }

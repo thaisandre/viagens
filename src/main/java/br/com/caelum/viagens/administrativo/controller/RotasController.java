@@ -52,11 +52,11 @@ public class RotasController {
 		
 		URI location = uriBuilder.path("/rotas/{id}").buildAndExpand(rota.getId()).toUri();
 		
-		return ResponseEntity.created(location).body(RotaOutputDto.rotaCriada(rota));
+		return ResponseEntity.created(location).body(RotaOutputDto.criado(rota));
 	}
 	
 	@GetMapping("/{id}")
 	public ResponseEntity<Map<String, Object>> detalhes(@PathVariable("id") Optional<Rota> rota){
-		return ResponseEntity.ok(RotaOutputDto.detalhesRota(IfResourceIsFound.of(rota)));
+		return ResponseEntity.ok(RotaOutputDto.detalhes(IfResourceIsFound.of(rota)));
 	}
 }
