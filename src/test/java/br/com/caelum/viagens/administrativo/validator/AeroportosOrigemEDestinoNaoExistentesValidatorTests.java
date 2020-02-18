@@ -37,7 +37,6 @@ public class AeroportosOrigemEDestinoNaoExistentesValidatorTests {
 	public void deveDetectarErroSeOrigemNaoExistir() {
 		
 		NewRotaInputDto newRotaDto = new NewRotaInputDto();
-		newRotaDto.setNome("A-B");
 		newRotaDto.setOrigemId(4L);
 		newRotaDto.setDestinoId(1L);
 		newRotaDto.setDuracao(120);
@@ -55,7 +54,6 @@ public class AeroportosOrigemEDestinoNaoExistentesValidatorTests {
 	public void deveDetectarErroSeDestinoNaoExistir() {
 		
 		NewRotaInputDto newRotaDto = new NewRotaInputDto();
-		newRotaDto.setNome("A-B");
 		newRotaDto.setOrigemId(1L);
 		newRotaDto.setDestinoId(4L);
 		newRotaDto.setDuracao(120);
@@ -73,7 +71,6 @@ public class AeroportosOrigemEDestinoNaoExistentesValidatorTests {
 	public void deveDetectarErroSeOrigemEDestinoNaoExistir() {
 		
 		NewRotaInputDto newRotaDto = new NewRotaInputDto();
-		newRotaDto.setNome("A-B");
 		newRotaDto.setOrigemId(3L);
 		newRotaDto.setDestinoId(4L);
 		newRotaDto.setDuracao(120);

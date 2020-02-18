@@ -37,6 +37,17 @@ public class Rota {
 	public Rota() {
 	}
 
+	public Rota(@NotNull Aeroporto origem, @NotNull Aeroporto destino, @Positive @NotNull Integer duracao) {
+		Assert.notNull(origem, "origem não pode ser nulo.");
+		Assert.notNull(destino, "destino não pode ser nulo.");
+		Assert.notNull(duracao, "duracao não pode ser nulo.");
+		Assert.isTrue(duracao > 0, () -> "duracao deve ser positivo");
+		this.nome = origem.getNome() + "-" + destino.getNome();
+		this.origem = origem;
+		this.destino = destino;
+		this.duracao = duracao;
+	}
+
 	public Rota(@NotBlank String nome, @NotNull Aeroporto origem, @NotNull Aeroporto destino,
 			@NotNull @Positive Integer duracao) {
 		Assert.hasText(nome, "nome n]ao pode ser vazio.");
@@ -53,19 +64,19 @@ public class Rota {
 	public Long getId() {
 		return this.id;
 	}
-	
+
 	public String getNome() {
 		return nome;
 	}
-	
+
 	public Aeroporto getOrigem() {
 		return origem;
 	}
-	
+
 	public Aeroporto getDestino() {
 		return destino;
 	}
-	
+
 	public Integer getDuracao() {
 		return duracao;
 	}

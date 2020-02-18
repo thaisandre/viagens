@@ -23,8 +23,10 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewRotaInputDto;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
+import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
+import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -44,10 +46,15 @@ public class RotasControllerTests {
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
 	
+	@Autowired
+	private RotaRepository rotaRepository;
+	
 	private Pais argentina;
 	private Pais brasil;
 	private Aeroporto aeroportoA;
 	private Aeroporto aeroportoB;
+	private Rota rota;
+
 	
 	@BeforeEach
 	public void setUp() {
@@ -55,14 +62,15 @@ public class RotasControllerTests {
 		this.brasil = this.paisRepository.save(new Pais("Brasil"));
 		this.aeroportoA = this.aeroportoRepository.save(new Aeroporto("AeroportoA", this.argentina));
 		this.aeroportoB = this.aeroportoRepository.save(new Aeroporto("AeroportoB", this.brasil));
+		this.rota = this.rotaRepository.save(new Rota(this.aeroportoA, this.aeroportoB, 90));
 	}
 	
 	@Test
 	public void deveSalvarNovaRotaValidaQueAindaNaoExiste() throws Exception {
 		
 		NewRotaInputDto rotaInputDto = new NewRotaInputDto();
-		rotaInputDto.setOrigemId(this.aeroportoA.getId());
-		rotaInputDto.setDestinoId(this.aeroportoB.getId());
+		rotaInputDto.setOrigemId(this.aeroportoB.getId());
+		rotaInputDto.setDestinoId(this.aeroportoA.getId());
 		rotaInputDto.setDuracao(90);
 		
 		RequestBuilder request = post(ENDPOINT)
@@ -72,15 +80,15 @@ public class RotasControllerTests {
 				
 		mockMvc.perform(request)
 			.andExpect(status().isCreated())
-			.andExpect(jsonPath("$.nome").value("AeroportoA-AeroportoB"))
-			.andExpect(jsonPath("$.origem.id").value(aeroportoA.getId()))
-			.andExpect(jsonPath("$.origem.nome").value(aeroportoA.getNome()))
-			.andExpect(jsonPath("$.origem.pais.id").value(aeroportoA.getPais().getId()))
-			.andExpect(jsonPath("$.origem.pais.nome").value(aeroportoA.getPais().getNome()))
-			.andExpect(jsonPath("$.destino.id").value(aeroportoB.getId()))
-			.andExpect(jsonPath("$.destino.nome").value(aeroportoB.getNome()))
-			.andExpect(jsonPath("$.destino.pais.id").value(aeroportoB.getPais().getId()))
-			.andExpect(jsonPath("$.destino.pais.nome").value(aeroportoB.getPais().getNome()))
+			.andExpect(jsonPath("$.nome").value("AeroportoB-AeroportoA"))
+			.andExpect(jsonPath("$.origem.id").value(aeroportoB.getId()))
+			.andExpect(jsonPath("$.origem.nome").value(aeroportoB.getNome()))
+			.andExpect(jsonPath("$.origem.pais.id").value(aeroportoB.getPais().getId()))
+			.andExpect(jsonPath("$.origem.pais.nome").value(aeroportoB.getPais().getNome()))
+			.andExpect(jsonPath("$.destino.id").value(aeroportoA.getId()))
+			.andExpect(jsonPath("$.destino.nome").value(aeroportoA.getNome()))
+			.andExpect(jsonPath("$.destino.pais.id").value(aeroportoA.getPais().getId()))
+			.andExpect(jsonPath("$.destino.pais.nome").value(aeroportoA.getPais().getNome()))
 			.andExpect(jsonPath("$.duracao").value(90));
 	}
 	
@@ -208,7 +216,7 @@ public class RotasControllerTests {
 	public void naoDeveSalvarNovaRotaComOrigemNaoExistente() throws Exception {
 		
 		NewRotaInputDto rotaInputDto = new NewRotaInputDto();
-		rotaInputDto.setOrigemId(20L);
+		rotaInputDto.setOrigemId(19L);
 		rotaInputDto.setDestinoId(this.aeroportoB.getId());
 		rotaInputDto.setDuracao(90);
 		
@@ -264,6 +272,25 @@ public class RotasControllerTests {
 			.andExpect(jsonPath("$.fieldErrors[0].mensagem").value("Aeroporto origem não existe no sistema."))
 			.andExpect(jsonPath("$.fieldErrors[1].campo").value("destinoId"))
 			.andExpect(jsonPath("$.fieldErrors[1].mensagem").value("Aeroporto destino não existe no sistema."));
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaRotaQueJaExiste() throws Exception {
+		
+		NewRotaInputDto rotaInputDto = new NewRotaInputDto();
+		rotaInputDto.setOrigemId(this.rota.getOrigem().getId());
+		rotaInputDto.setDestinoId(this.rota.getDestino().getId());
+		rotaInputDto.setDuracao(90);
+		
+		RequestBuilder request = post(ENDPOINT)
+				.contentType(MediaType.APPLICATION_JSON_VALUE)
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
+				.content(new ObjectMapper().writeValueAsString(rotaInputDto));
+				
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.globalErrors").isArray())
+			.andExpect(jsonPath("$.globalErrors[0]").value("Rota já existe no sistema."));
 	}
 	
 	
