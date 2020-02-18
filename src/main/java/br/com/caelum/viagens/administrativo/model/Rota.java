@@ -6,11 +6,10 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
 import org.springframework.util.Assert;
-
-import com.sun.istack.NotNull;
 
 @Entity
 public class Rota {
@@ -49,5 +48,25 @@ public class Rota {
 		this.origem = origem;
 		this.destino = destino;
 		this.duracao = duracao;
+	}
+
+	public Long getId() {
+		return this.id;
+	}
+	
+	public String getNome() {
+		return nome;
+	}
+	
+	public Aeroporto getOrigem() {
+		return origem;
+	}
+	
+	public Aeroporto getDestino() {
+		return destino;
+	}
+	
+	public Integer getDuracao() {
+		return duracao;
 	}
 }
