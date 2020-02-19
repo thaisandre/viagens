@@ -2,14 +2,12 @@ package br.com.caelum.viagens.administrativo.repository;
 
 import java.util.Optional;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 
-public interface AeroportoRepository extends Repository<Aeroporto, Long>{
+public interface AeroportoRepository extends CrudRepository<Aeroporto, Long>{
 
-	Aeroporto save(Aeroporto aeroporto);
-	
 	Optional<Aeroporto> findById(Long id);
 
 	Optional<Aeroporto> findByNome(String nome);

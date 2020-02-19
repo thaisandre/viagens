@@ -4,6 +4,7 @@ import java.util.List;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
@@ -20,10 +21,16 @@ public class ValidationErrorsHandler {
 	public ValidationErrorsDto handler(MethodArgumentNotValidException exception) {
 		
 		List<FieldError> fieldErrors = exception.getBindingResult().getFieldErrors();
+		List<ObjectError> globalErrors = exception.getBindingResult().getGlobalErrors();
+		
 		ValidationErrorsDto validationErrorsDto = new ValidationErrorsDto();
 		
 		fieldErrors.forEach(error -> {
 			validationErrorsDto.addFieldError(new FieldErrorDto(error.getField(), error.getDefaultMessage()));
+		});
+		
+		globalErrors.forEach(error -> {
+			validationErrorsDto.addGlobalError(error.getDefaultMessage());
 		});
 		
 		return validationErrorsDto;

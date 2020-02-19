@@ -10,7 +10,6 @@ import javax.transaction.Transactional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.HttpHeaders;
@@ -31,7 +30,6 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 @AutoConfigureMockMvc
 @Transactional
 @ActiveProfiles("test")
-@AutoConfigureTestDatabase(replace= AutoConfigureTestDatabase.Replace.NONE)
 public class CompanhiasControllerTests {
 	
 	private static final String ENDPOINT = "/companhias";

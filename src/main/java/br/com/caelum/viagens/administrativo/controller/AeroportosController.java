@@ -1,6 +1,7 @@
 package br.com.caelum.viagens.administrativo.controller;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -18,14 +19,14 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewAeroportoInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoCriadoOutputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesAeroportoOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoOutputDto;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
 import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RestController
 @RequestMapping("/aeroportos")
@@ -33,10 +34,14 @@ public class AeroportosController {
 
 	@Autowired
 	public PaisRepository paisRepository;
+	
 	@Autowired
 	public AeroportoRepository aeroportoRepository;
+	
+	@Autowired
+	private FormFlow<Aeroporto> flow;
 
-	@InitBinder()
+	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
 				new NomeAeroportoExistenteValidator(aeroportoRepository),
@@ -44,20 +49,20 @@ public class AeroportosController {
 	}
 
 	@PostMapping
-	public ResponseEntity<AeroportoCriadoOutputDto> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
+	public ResponseEntity<Map<String, Object>> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
 			UriComponentsBuilder uribuilder) {
-		Aeroporto aeroporto = newAeroportoDto.toModel(this.paisRepository);
-		this.aeroportoRepository.save(aeroporto);
+		
+		Aeroporto aeroporto = flow.save(newAeroportoDto).getEntity();
 
 		URI location = uribuilder.path("/aeroportos/{id}").buildAndExpand(aeroporto.getId()).toUri();
 
-		return ResponseEntity.created(location).body(new AeroportoCriadoOutputDto(aeroporto));
+		return ResponseEntity.created(location).body(AeroportoOutputDto.criado(aeroporto));
 
 	}
 
 	@GetMapping("/{id}")
-	public ResponseEntity<DetalhesAeroportoOutputDto> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
-		return  ResponseEntity.ok(new DetalhesAeroportoOutputDto(IfResourceIsFound.of(aeroporto)));
+	public ResponseEntity<Map<String, Object>> detalhes(@PathVariable("id") Optional<Aeroporto> aeroporto) {
+		return  ResponseEntity.ok(AeroportoOutputDto.detalhes(IfResourceIsFound.of(aeroporto)));
 	}
 
 }

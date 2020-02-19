@@ -2,13 +2,11 @@ package br.com.caelum.viagens.administrativo.repository;
 
 import java.util.Optional;
 
-import org.springframework.data.repository.Repository;
+import org.springframework.data.repository.CrudRepository;
 
 import br.com.caelum.viagens.administrativo.model.Companhia;
 
-public interface CompanhiaRepository extends Repository<Companhia, Long>{
-
-	Companhia save(Companhia companhia);
+public interface CompanhiaRepository extends CrudRepository<Companhia, Long>{
 
 	Optional<Companhia> findByNome(String nome);
 	

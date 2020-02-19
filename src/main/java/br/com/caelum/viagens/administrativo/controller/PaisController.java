@@ -1,6 +1,7 @@
 package br.com.caelum.viagens.administrativo.controller;
 
 import java.net.URI;
+import java.util.Map;
 import java.util.Optional;
 
 import javax.validation.Valid;
@@ -18,17 +19,20 @@ import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.DetalhesPaisOutputDto;
-import br.com.caelum.viagens.administrativo.controller.dto.output.PaisCriadoOutputDto;
+import br.com.caelum.viagens.administrativo.controller.dto.output.PaisOutputDto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RestController
 @RequestMapping("/paises")
 public class PaisController {
 
+	@Autowired
+	private FormFlow<Pais> flow;
+	
 	@Autowired
 	private PaisRepository paisRepository;
 
@@ -38,18 +42,17 @@ public class PaisController {
 	}
 
 	@PostMapping
-	public ResponseEntity<PaisCriadoOutputDto> cadastro(@Valid @RequestBody NewPaisInputDto newPais, UriComponentsBuilder uriBuilder) {
-		Pais pais = newPais.toModel();
-		this.paisRepository.save(pais);
-
+	public ResponseEntity<Map<String , Object>> cadastro(@Valid @RequestBody NewPaisInputDto newPais, UriComponentsBuilder uriBuilder) {
+		Pais pais = flow.save(newPais).getEntity();
+		
 		URI location = uriBuilder.path("/paises/{id}")
 				.buildAndExpand(pais.getId()).toUri();
 
-		return ResponseEntity.created(location).body(new PaisCriadoOutputDto(pais));
+		return ResponseEntity.created(location).body(PaisOutputDto.criado(pais));
 	}
 	
 	@GetMapping("/{id}")
-	public ResponseEntity<DetalhesPaisOutputDto> detalhesPais(@PathVariable("id") Optional<Pais> pais){
-		return ResponseEntity.ok(new DetalhesPaisOutputDto(IfResourceIsFound.of(pais)));
+	public ResponseEntity<Map<String, Object>> detalhesPais(@PathVariable("id") Optional<Pais> pais){
+		return ResponseEntity.ok(PaisOutputDto.detalhes(IfResourceIsFound.of(pais)));
 	}
 }
