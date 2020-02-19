@@ -14,29 +14,23 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewRotaInputDto
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
-import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 
 public class RotaExistenteValidatorTests {
 	
 	private RotaExistenteValidator validator;
 	private RotaRepository rotaRepository;
-	private AeroportoRepository aeroportoRepository;
 	
 	@BeforeEach
 	public void setUp() {
-		this.rotaRepository = Mockito.mock(RotaRepository.class);
-		this.aeroportoRepository = Mockito.mock(AeroportoRepository.class);
-		
+		this.rotaRepository = Mockito.mock(RotaRepository.class);		
 		Aeroporto aeroportoA = new Aeroporto("AeroportoA", new Pais("Argentina"));
 		Aeroporto aeroportoB = new Aeroporto("AeroportoB", new Pais("Brasil"));
+		
 		Rota rota = new Rota(aeroportoA, aeroportoB, 90);
+		when(this.rotaRepository.findByOrigemIdAndDestinoId(1L, 2L)).thenReturn(Optional.of(rota));
 		
-		when(this.aeroportoRepository.findById(1L)).thenReturn(Optional.of(aeroportoA));
-		when(this.aeroportoRepository.findById(2L)).thenReturn(Optional.of(aeroportoB));
-		when(this.rotaRepository.findByOrigemAndDestino(aeroportoA, aeroportoB)).thenReturn(Optional.of(rota));
-		
-		this.validator = new RotaExistenteValidator(rotaRepository, aeroportoRepository);
+		this.validator = new RotaExistenteValidator(rotaRepository);
 	}
 	
 	@Test
@@ -58,7 +52,7 @@ public class RotaExistenteValidatorTests {
 	@Test
 	public void naoDeveDetectarErroQuandoCadastrarRotaQueNaoExiste() {
 		NewRotaInputDto newRotaDto = new NewRotaInputDto();
-		newRotaDto.setOrigemId(2L);
+		newRotaDto.setOrigemId(1L);
 		newRotaDto.setDestinoId(1L);
 		newRotaDto.setDuracao(90);
 		

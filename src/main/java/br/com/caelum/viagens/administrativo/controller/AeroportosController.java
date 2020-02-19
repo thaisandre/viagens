@@ -26,6 +26,7 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
 import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RestController
 @RequestMapping("/aeroportos")
@@ -33,8 +34,12 @@ public class AeroportosController {
 
 	@Autowired
 	public PaisRepository paisRepository;
+	
 	@Autowired
 	public AeroportoRepository aeroportoRepository;
+	
+	@Autowired
+	private FormFlow<Aeroporto> flow;
 
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -46,8 +51,8 @@ public class AeroportosController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> cadastro(@Valid @RequestBody NewAeroportoInputDto newAeroportoDto,
 			UriComponentsBuilder uribuilder) {
-		Aeroporto aeroporto = newAeroportoDto.toModel(this.paisRepository);
-		this.aeroportoRepository.save(aeroporto);
+		
+		Aeroporto aeroporto = flow.save(newAeroportoDto).getEntity();
 
 		URI location = uribuilder.path("/aeroportos/{id}").buildAndExpand(aeroporto.getId()).toUri();
 

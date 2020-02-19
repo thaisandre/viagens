@@ -26,6 +26,7 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
 import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RestController
 @RequestMapping("/companhias")
@@ -36,6 +37,9 @@ public class CompanhiasController {
 
 	@Autowired
 	private CompanhiaRepository companhiaRepository;
+	
+	@Autowired
+	private FormFlow<Companhia> flow;
 
 	@InitBinder()
 	public void initBinder(WebDataBinder webDataBinder) {
@@ -47,8 +51,8 @@ public class CompanhiasController {
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> cadastro(@Valid @RequestBody NewCompanhiaInputDto newCompanhiaDto,
 			UriComponentsBuilder uriBuilder) {
-		Companhia companhia = newCompanhiaDto.toModel(this.paisRepository);
-		this.companhiaRepository.save(companhia);
+		
+		Companhia companhia = flow.save(newCompanhiaDto).getEntity();
 		
 		URI location = uriBuilder.path("/companhias/{id}")
 				.buildAndExpand(companhia.getId()).toUri();

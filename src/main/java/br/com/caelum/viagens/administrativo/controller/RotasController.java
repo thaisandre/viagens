@@ -27,6 +27,7 @@ import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoDiferentesValidator;
 import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoNaoExistentesValidator;
 import br.com.caelum.viagens.administrativo.validator.RotaExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RequestMapping("/rotas")
 @RestController
@@ -38,20 +39,22 @@ public class RotasController {
 	@Autowired
 	private RotaRepository rotaRepository;
 	
+	@Autowired
+	private FormFlow<Rota> flow;
+	
 	@InitBinder
 	public void InitBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
 				new AeroportosOrigemEDestinoNaoExistentesValidator(aeroportoRepository),
 				new AeroportosOrigemEDestinoDiferentesValidator(),
-				new RotaExistenteValidator(rotaRepository, aeroportoRepository));
+				new RotaExistenteValidator(rotaRepository));
 	}
 	
 	@PostMapping
 	public ResponseEntity<Map<String, Object>> cadastro(@Valid @RequestBody NewRotaInputDto newRotaDto,
 			UriComponentsBuilder uriBuilder){
-		Rota rota = newRotaDto.toModel(this.aeroportoRepository);
-		this.rotaRepository.save(rota);
 		
+		Rota rota = flow.save(newRotaDto).getEntity();
 		URI location = uriBuilder.path("/rotas/{id}").buildAndExpand(rota.getId()).toUri();
 		
 		return ResponseEntity.created(location).body(RotaOutputDto.criado(rota));

@@ -5,6 +5,8 @@ import java.util.Optional;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
+import org.springframework.util.StringUtils;
+
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
@@ -55,10 +57,10 @@ public class NewRotaInputDto {
 		Optional<Aeroporto> aeroportoOrigem = aeroportoRepository.findById(this.origemId);
 		Optional<Aeroporto> aeroportoDestino = aeroportoRepository.findById(this.destinoId);
 		
-		if(nome == null) {
-			return new Rota(aeroportoOrigem.get(), aeroportoDestino.get(), this.duracao);
-		} else {
+		if(StringUtils.hasText(this.nome)) {
 			return new Rota(this.nome, aeroportoOrigem.get(), aeroportoDestino.get(), this.duracao);
+		} else {
+			return new Rota(aeroportoOrigem.get(), aeroportoDestino.get(), this.duracao);
 		}
 	}
 }

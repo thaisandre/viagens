@@ -24,11 +24,15 @@ import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
+import io.github.asouza.FormFlow;
 
 @RestController
 @RequestMapping("/paises")
 public class PaisController {
 
+	@Autowired
+	private FormFlow<Pais> flow;
+	
 	@Autowired
 	private PaisRepository paisRepository;
 
@@ -39,9 +43,8 @@ public class PaisController {
 
 	@PostMapping
 	public ResponseEntity<Map<String , Object>> cadastro(@Valid @RequestBody NewPaisInputDto newPais, UriComponentsBuilder uriBuilder) {
-		Pais pais = newPais.toModel();
-		this.paisRepository.save(pais);
-
+		Pais pais = flow.save(newPais).getEntity();
+		
 		URI location = uriBuilder.path("/paises/{id}")
 				.buildAndExpand(pais.getId()).toUri();
 
