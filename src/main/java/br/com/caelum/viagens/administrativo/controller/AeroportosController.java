@@ -57,7 +57,6 @@ public class AeroportosController {
 		URI location = uribuilder.path("/aeroportos/{id}").buildAndExpand(aeroporto.getId()).toUri();
 
 		return ResponseEntity.created(location).body(AeroportoOutputDto.criado(aeroporto));
-
 	}
 
 	@GetMapping("/{id}")
