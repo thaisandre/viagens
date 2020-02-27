@@ -26,18 +26,15 @@ public class RotaExistenteValidator implements Validator {
 	@Override
 	public void validate(Object target, Errors errors) {
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
-		System.out.println("chamou rota existente");
-		
-		if (newVooDto.getRotas() != null) {
-			List<Optional<br.com.caelum.viagens.administrativo.model.Rota>> rotas = newVooDto.getRotas().stream()
-					.map(r -> rotaRepository.findById(r.getRotaId())).collect(Collectors.toList());
 
-			rotas.forEach(r -> {
-				if (!r.isPresent()) {
-					errors.rejectValue("rotas", null, "rotaId não existe no sistema.");
-				}
-			});
-		}
+		List<Optional<br.com.caelum.viagens.administrativo.model.Rota>> rotas = newVooDto.getRotas().stream()
+				.map(r -> rotaRepository.findById(r.getRotaId())).collect(Collectors.toList());
+
+		rotas.forEach(r -> {
+			if (!r.isPresent()) {
+				errors.rejectValue("rotas", null, "rotaId não existe no sistema.");
+			}
+		});
 	}
 
 }

@@ -19,7 +19,6 @@ public class RotaRepetidaValidator implements Validator{
 	public void validate(Object target, Errors errors) {
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
 		
-		
 		Set<Long> conjuntoRotasId = 
 				newVooDto.getRotas().stream().map(r -> r.getRotaId()).collect(Collectors.toSet());
 		

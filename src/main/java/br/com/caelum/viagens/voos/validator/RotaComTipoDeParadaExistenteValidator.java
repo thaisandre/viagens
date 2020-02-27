@@ -21,7 +21,7 @@ public class RotaComTipoDeParadaExistenteValidator implements Validator {
 			if (r.getParada() != null) {
 				if (r.getParada().getTipo() != null) {
 					if (!TipoParada.tiposParada().contains(r.getParada().getTipo())) {
-						errors.reject(null, "Tipo de parada \'" + r.getParada().getTipo() + "\' é inválido");
+						errors.reject(null, "Tipo de parada \'" + r.getParada().getTipo() + "\' é inválido.");
 						;
 					}
 				}

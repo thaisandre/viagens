@@ -25,6 +25,7 @@ import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.output.VooOutputDto;
 import br.com.caelum.viagens.voos.model.Voo;
 import br.com.caelum.viagens.voos.validator.CompanhiaExistenteValidator;
+import br.com.caelum.viagens.voos.validator.OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidator;
 import br.com.caelum.viagens.voos.validator.RotaComTipoDeParadaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaRepetidaValidator;
@@ -53,7 +54,8 @@ public class VoosController {
 				new RotaComTipoDeParadaExistenteValidator(),
 				new RotasComUmaUnicaPernaFinalValidator(),
 				new RotaRepetidaValidator(),
-				new RotasComSequenciaLogicaValidator(rotaRepository));
+				new RotasComSequenciaLogicaValidator(rotaRepository),
+				new OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidator(rotaRepository));
 	}
 
 	@PostMapping
