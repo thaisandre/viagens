@@ -55,6 +55,10 @@ public class Rota {
 	public Aeroporto getOrigem() {
 		return rota.getOrigem();
 	}
+	
+	public Parada getParada() {
+		return parada;
+	}
 
 	public void setParada(Parada parada) {
 		this.parada = parada;

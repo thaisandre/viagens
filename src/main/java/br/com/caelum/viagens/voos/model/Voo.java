@@ -67,5 +67,21 @@ public class Voo {
 		}
 		return true;
 	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public String getNomeCompanhia() {
+		return companhia.getNome();
+	}
+	
+	public Integer getLugaresDisponiveis() {
+		return lugaresDisponiveis;
+	}
+	
+	public List<Rota> getRotas() {
+		return rotas;
+	}
 
 }

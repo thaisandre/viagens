@@ -37,5 +37,13 @@ public class Parada {
 		this.tempo = tempo;
 		this.tipo = tipo;
 	}
+	
+	public Integer getTempo() {
+		return tempo;
+	}
+	
+	public TipoParada getTipo() {
+		return tipo;
+	}
 
 }
