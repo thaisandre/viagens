@@ -12,6 +12,8 @@ import org.hibernate.annotations.Cascade;
 import org.hibernate.annotations.CascadeType;
 import org.springframework.util.Assert;
 
+import br.com.caelum.viagens.administrativo.model.Aeroporto;
+
 @Entity(name="rota_voo")
 public class Rota {
 	
@@ -27,6 +29,11 @@ public class Rota {
 	@OneToOne
 	private Parada parada;
 	
+	public Rota(@NotNull br.com.caelum.viagens.administrativo.model.Rota rota) {
+		Assert.notNull(rota, "A rota não pode ser nula.");
+		this.rota = rota;
+	}
+	
 	public Rota(@NotNull br.com.caelum.viagens.administrativo.model.Rota rota, Parada parada) {
 		Assert.notNull(rota, "A rota não pode ser nula.");
 		this.rota = rota;
@@ -35,4 +42,21 @@ public class Rota {
 	
 	@Deprecated
 	public Rota() {}
+	
+	
+	public boolean isPernaFinal() {
+		return this.parada == null;
+	}
+	
+	public Aeroporto getDestino() {
+		return rota.getDestino();
+	}
+	
+	public Aeroporto getOrigem() {
+		return rota.getOrigem();
+	}
+
+	public void setParada(Parada parada) {
+		this.parada = parada;
+	}
 }

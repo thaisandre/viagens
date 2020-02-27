@@ -1,6 +1,6 @@
 package br.com.caelum.viagens.voos.model;
 
-import java.util.Set;
+import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -27,7 +27,7 @@ public class Voo {
 	@NotNull
 	@Cascade(CascadeType.PERSIST)
 	@ManyToMany
-	private Set<Rota> rotas;
+	private List<Rota> rotas;
 	
 	@NotNull
 	@ManyToOne
@@ -40,16 +40,32 @@ public class Voo {
 	@Deprecated
 	public Voo() {}
 
-	public Voo(@NotNull Set<Rota> rotas, @NotNull Companhia companhia, @NotNull @Positive Integer lugaresDisponiveis) {
+	public Voo(@NotNull List<Rota> rotas, @NotNull Companhia companhia, @NotNull @Positive Integer lugaresDisponiveis) {
+		System.out.println("no contrutor " + rotas);
 		Assert.notNull(rotas, "A lista de rotas não pode ser nula");
 		Assert.notEmpty(rotas, "A lista de rotas não pode ser vazia");
+		
 		Assert.notNull(companhia, "A companhia não pode ser nula");
 		Assert.notNull(lugaresDisponiveis, "O número de lugares disponíveis não pode ser nulo");
 		Assert.isTrue(lugaresDisponiveis > 0, () -> "O número de lugares disponíveis deve ser positivo.");
 		
 		this.rotas = rotas;
+		Assert.isTrue(temSequenciaLogica(), "As rotas não possuem sequência lógica.");
+		
 		this.companhia = companhia;
 		this.lugaresDisponiveis = lugaresDisponiveis;
+	}
+	
+	private boolean temSequenciaLogica() {
+		System.out.println("tamanho das rotas: " + rotas);
+		Rota anterior = rotas.get(0);
+		for(int i = 1; i < rotas.size(); i++) {
+			if(!anterior.getDestino().equals(rotas.get(i).getOrigem())) {
+				return false;
+			}
+			anterior = rotas.get(i);
+		}
+		return true;
 	}
 
 }
