@@ -70,4 +70,20 @@ public class RotaComTipoDeParadaExistenteValidatorTests {
 		
 		assertThat(result.getGlobalErrors()).isEmpty();
 	}
+	
+	@Test
+	public void deveCadastrarVooSemParada() {
+		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
+				
+		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		rotas.add(rota1);
+		
+		NewVooInputDto newVooDto = new NewVooInputDto();
+		newVooDto.setRotas(rotas);
+		
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
+		validator.validate(newVooDto, result);
+		
+		assertThat(result.getGlobalErrors()).isEmpty();
+	}
 }

@@ -12,11 +12,12 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.validation.BeanPropertyBindingResult;
 
+import br.com.caelum.viagens.administrativo.model.Aeroporto;
+import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
-import br.com.caelum.viagens.voos.validator.setup.ListaDeRotasSetUp;
 
 public class OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidatorTests {
 	
@@ -27,26 +28,37 @@ public class OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidatorTests {
 	public void setUp() {
 		rotaRepository = Mockito.mock(RotaRepository.class);
 		
-		List<Rota> rotas = ListaDeRotasSetUp.populaRotas();
+		Aeroporto aeroportoA = new Aeroporto("AeroportoA", new Pais("Argentina"));
+		Aeroporto aeroportoB = new Aeroporto("AeroportoB", new Pais("Brasil"));
+		Aeroporto aeroportoC = new Aeroporto("AeroportoC", new Pais("Chile"));
+		Aeroporto aeroportoU = new Aeroporto("AeroportoU", new Pais("Uruguai"));
 		
-		for(int i = 0; i < rotas.size(); i++) {
-			when(this.rotaRepository.findById(Long.valueOf(i+1))).thenReturn(Optional.of(rotas.get(i)));
-		}
+		Rota rota1AtoB = new Rota(aeroportoA, aeroportoB, 120);
+		Rota rota2BtoC = new Rota(aeroportoB, aeroportoC, 120);
+		Rota rota3CtoU = new Rota(aeroportoC, aeroportoU, 120);
+		Rota rota4UtoB = new Rota(aeroportoU, aeroportoB, 120);
+		Rota rota5UtoA = new Rota(aeroportoU, aeroportoA, 120);
+		
+		when(this.rotaRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(rota1AtoB));
+		when(this.rotaRepository.findById(Long.valueOf(2L))).thenReturn(Optional.of(rota2BtoC));
+		when(this.rotaRepository.findById(Long.valueOf(3L))).thenReturn(Optional.of(rota3CtoU));
+		when(this.rotaRepository.findById(Long.valueOf(4L))).thenReturn(Optional.of(rota4UtoB));
+		when(this.rotaRepository.findById(Long.valueOf(5L))).thenReturn(Optional.of(rota5UtoA));
 		
 		this.validator = new OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidator(rotaRepository);
 	}
 	
 	@Test
-	public void naoDeveCadastrarVooComRotasComOrigemDeRotaAnteriorIgualAoDestinoDeRotaPosteriorConsecutiva() {
-		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
-		rota1.setRotaId(1L);
+	public void naoDeveCadastrarVooComRotasComOrigemDeRotaAnteriorIgualAoDestinoDeRotaPosteriorConsecutiva() {	
+		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
+		rotaAtoB.setRotaId(1L);
 		
-		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
-		rota2.setRotaId(4L);
+		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
+		rotaUtoA.setRotaId(5L);
 		
 		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
-		rotas.add(rota1);
-		rotas.add(rota2);
+		rotas.add(rotaAtoB);
+		rotas.add(rotaUtoA);
 				
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setRotas(rotas);
@@ -58,23 +70,59 @@ public class OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidatorTests {
 		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
 			.isEqualTo("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior.");
 		
+	}
+	
+	@Test
+	public void naoDeveCadastrarVooComRotasComOrigemDaPrimeiraRotaIgualAoDestinoDaUltimaRotaNaoConsecutivas() {
+		
+		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
+		rotaAtoB.setRotaId(1L);
+		
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
+		
+		NewRotaDoVooInputDto rotaCtoU = new NewRotaDoVooInputDto();
+		rotaCtoU.setRotaId(3L);
+		
+		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
+		rotaUtoA.setRotaId(5L);
+		
+		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		rotas.add(rotaAtoB);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaCtoU);
+		rotas.add(rotaUtoA);
+				
+		NewVooInputDto newVooDto = new NewVooInputDto();
+		newVooDto.setRotas(rotas);
+
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
+		validator.validate(newVooDto, result);
+		
+		assertThat(result.getGlobalErrors()).isNotEmpty();
+		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
+			.isEqualTo("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior.");
 	}
 	
 	@Test
 	public void naoDeveCadastrarVooComRotasComOrigemDeRotaAnteriorIgualAoDestinoDeRotaPosteriorNaoConsecutivas() {
-		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
-		rota1.setRotaId(1L);
+		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
+		rotaAtoB.setRotaId(1L);
 		
-		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
-		rota2.setRotaId(9L);
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
 		
-		NewRotaDoVooInputDto rota3 = new NewRotaDoVooInputDto();
-		rota2.setRotaId(10L);
+		NewRotaDoVooInputDto rotaCtoU = new NewRotaDoVooInputDto();
+		rotaCtoU.setRotaId(3L);
+		
+		NewRotaDoVooInputDto rotaUtoB = new NewRotaDoVooInputDto();
+		rotaUtoB.setRotaId(4L);
 		
 		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
-		rotas.add(rota1);
-		rotas.add(rota2);
-		rotas.add(rota3);
+		rotas.add(rotaAtoB);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaCtoU);
+		rotas.add(rotaUtoB);
 				
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setRotas(rotas);
@@ -89,48 +137,21 @@ public class OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidatorTests {
 	}
 	
 	@Test
-	public void naoDeveCadastrarVooComRotasComOrigemDaprimeiraRotaIgualAoDestinoDaUltimaRotaNaoConsecutivas() {
-		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
-		rota1.setRotaId(1L);
+	public void deveCadastrarVooComRotasComOrigemDeRotaAnteriorDiferenteDeDestinoDeRotaPosterior() {
 		
-		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
-		rota2.setRotaId(9L);
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
 		
-		NewRotaDoVooInputDto rota3 = new NewRotaDoVooInputDto();
-		rota3.setRotaId(12L);
+		NewRotaDoVooInputDto rotaCtoU = new NewRotaDoVooInputDto();
+		rotaCtoU.setRotaId(3L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
-		rotas.add(rota1);
-		rotas.add(rota2);
-		rotas.add(rota3);
-				
-		NewVooInputDto newVooDto = new NewVooInputDto();
-		newVooDto.setRotas(rotas);
-		
-		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
-		validator.validate(newVooDto, result);
-		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior.");
-		
-	}
-	
-	@Test
-	public void deveCadastrarVooComRotasComOrigemDeRotaanteriorDiferenteDeDestinoDeRotaPosterior() {
-		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
-		rota1.setRotaId(1L);
-		
-		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
-		rota2.setRotaId(5L);
-		
-		NewRotaDoVooInputDto rota3 = new NewRotaDoVooInputDto();
-		rota3.setRotaId(9L);
+		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
+		rotaUtoA.setRotaId(5L);
 		
 		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
-		rotas.add(rota1);
-		rotas.add(rota2);
-		rotas.add(rota3);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaCtoU);
+		rotas.add(rotaUtoA);
 				
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setRotas(rotas);

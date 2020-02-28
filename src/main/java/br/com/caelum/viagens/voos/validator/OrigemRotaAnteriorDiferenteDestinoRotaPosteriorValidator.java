@@ -29,23 +29,25 @@ public class OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidator implements
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
 		
 		if(!newVooDto.getRotas().isEmpty()) {
-			if(!temSequenciaLogica(newVooDto.getRotas())) {
+			if(!isOrigemAnteriorDiferenteDestinoPosterior(newVooDto.getRotas())) {
 				errors.reject(null, "A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior.");
 			}
 		}
 		
 	}
 
-	private boolean temSequenciaLogica(List<NewRotaDoVooInputDto> rotasDoVoo) {
+	private boolean isOrigemAnteriorDiferenteDestinoPosterior(List<NewRotaDoVooInputDto> rotasDoVoo) {
 
 		List<Optional<br.com.caelum.viagens.administrativo.model.Rota>> rotas = rotasDoVoo.stream()
 				.map(r -> rotaRepository.findById(r.getRotaId())).collect(Collectors.toList());
 
 		for (int i = 0; i < rotas.size() - 1; i++) {
-			for(int j = i+1; j < rotas.size(); j++) {
-				if(rotas.get(i).isPresent()) {
-					if(rotas.get(i).get().getOrigem().equals(rotas.get(j).get().getDestino())) {
-						return false;
+			if(rotas.get(i).isPresent()) {
+				for(int j = i+1; j < rotas.size(); j++) {
+					if(rotas.get(j).isPresent()) {
+						if(rotas.get(i).get().getOrigem().equals(rotas.get(j).get().getDestino())) {
+							return false;
+						}
 					}
 				}
 			}

@@ -29,6 +29,7 @@ public class RotasComSequenciaLogicaValidator implements Validator {
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
 		
 		if(!newVooDto.getRotas().isEmpty()) {
+			
 			if(!temSequenciaLogica(newVooDto.getRotas())) {
 				errors.reject(null, "As rotas não possuem uma sequência lógica.");
 			}
@@ -50,7 +51,6 @@ public class RotasComSequenciaLogicaValidator implements Validator {
 				anterior = rotas.get(i);
 			}
 		}
-		
 		return true;
 	}
 

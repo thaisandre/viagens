@@ -50,6 +50,10 @@ public class NewVooInputDto {
 		return companhiaId;
 	}
 	
+	public Integer getLugaresDisponiveis() {
+		return lugaresDisponiveis;
+	}
+	
 	public Voo toModel(CompanhiaRepository companhiaRepository, RotaRepository rotaRepository) {
 
 		List<Rota> rotasDoVoo = this.rotas.stream().map(r 
