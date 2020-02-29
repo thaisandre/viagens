@@ -5,9 +5,11 @@ import javax.validation.constraints.Positive;
 
 import br.com.caelum.viagens.voos.model.Parada;
 import br.com.caelum.viagens.voos.model.TipoParada;
+import br.com.caelum.viagens.voos.validator.annotations.TipoParadaExistente;
 
 public class NewParadaDaRotaInputDto {
 	
+	@TipoParadaExistente
 	@NotNull
 	private String tipo;
 

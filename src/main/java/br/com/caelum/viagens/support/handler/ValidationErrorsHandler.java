@@ -1,4 +1,4 @@
-package br.com.caelum.viagens.administrativo.support.handler;
+package br.com.caelum.viagens.support.handler;
 
 import java.util.List;
 
@@ -10,8 +10,8 @@ import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import br.com.caelum.viagens.administrativo.support.dto.FieldErrorDto;
-import br.com.caelum.viagens.administrativo.support.dto.ValidationErrorsDto;
+import br.com.caelum.viagens.support.dto.FieldErrorDto;
+import br.com.caelum.viagens.support.dto.ValidationErrorsDto;
 
 @RestControllerAdvice
 public class ValidationErrorsHandler {
@@ -34,7 +34,5 @@ public class ValidationErrorsHandler {
 		});
 		
 		return validationErrorsDto;
-	}
-	
-	
+	}	
 }

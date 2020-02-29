@@ -23,9 +23,9 @@ import br.com.caelum.viagens.administrativo.controller.dto.output.AeroportoOutpu
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeAeroportoExistenteValidator;
 import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
+import br.com.caelum.viagens.support.IfResourceIsFound;
 import io.github.asouza.FormFlow;
 
 @RestController

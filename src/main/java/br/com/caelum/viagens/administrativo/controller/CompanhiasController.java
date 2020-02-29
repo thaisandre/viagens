@@ -23,9 +23,9 @@ import br.com.caelum.viagens.administrativo.controller.dto.output.CompanhiaOutpu
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.NomeCompanhiaExistenteValidator;
 import br.com.caelum.viagens.administrativo.validator.PaisNaoExistenteValidator;
+import br.com.caelum.viagens.support.IfResourceIsFound;
 import io.github.asouza.FormFlow;
 
 @RestController

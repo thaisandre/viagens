@@ -20,13 +20,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
+import br.com.caelum.viagens.support.IfResourceIsFound;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.output.VooOutputDto;
 import br.com.caelum.viagens.voos.model.Voo;
 import br.com.caelum.viagens.voos.validator.CompanhiaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.OrigemRotaAnteriorDiferenteDestinoRotaPosteriorValidator;
-import br.com.caelum.viagens.voos.validator.RotaComTipoDeParadaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaRepetidaValidator;
 import br.com.caelum.viagens.voos.validator.RotasComSequenciaLogicaValidator;
@@ -52,7 +51,6 @@ public class VoosController {
 		webDataBinder.addValidators(
 				new CompanhiaExistenteValidator(this.companhiaRepository),
 				new RotaExistenteValidator(rotaRepository),
-				new RotaComTipoDeParadaExistenteValidator(),
 				new RotasComUmaUnicaPernaFinalValidator(),
 				new RotaRepetidaValidator(),
 				new UltimaRotaPernaFinalValidator(),

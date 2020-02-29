@@ -1,13 +1,14 @@
 package br.com.caelum.viagens.voos.model;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
-import javax.persistence.ManyToMany;
 import javax.persistence.ManyToOne;
+import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Positive;
 
@@ -26,8 +27,8 @@ public class Voo {
 	
 	@NotNull
 	@Cascade(CascadeType.PERSIST)
-	@ManyToMany
-	private List<Rota> rotas;
+	@OneToMany
+	private List<Rota> rotas = new ArrayList<>();
 	
 	@NotNull
 	@ManyToOne
@@ -50,22 +51,8 @@ public class Voo {
 		Assert.isTrue(lugaresDisponiveis > 0, () -> "O número de lugares disponíveis deve ser positivo.");
 		
 		this.rotas = rotas;
-		Assert.isTrue(temSequenciaLogica(), "As rotas não possuem sequência lógica.");
-		
 		this.companhia = companhia;
 		this.lugaresDisponiveis = lugaresDisponiveis;
-	}
-	
-	private boolean temSequenciaLogica() {
-		System.out.println("tamanho das rotas: " + rotas);
-		Rota anterior = rotas.get(0);
-		for(int i = 1; i < rotas.size(); i++) {
-			if(!anterior.getDestino().equals(rotas.get(i).getOrigem())) {
-				return false;
-			}
-			anterior = rotas.get(i);
-		}
-		return true;
 	}
 	
 	public Long getId() {
@@ -83,5 +70,4 @@ public class Voo {
 	public List<Rota> getRotas() {
 		return rotas;
 	}
-
 }

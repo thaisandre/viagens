@@ -23,10 +23,10 @@ import br.com.caelum.viagens.administrativo.controller.dto.output.RotaOutputDto;
 import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoDiferentesValidator;
 import br.com.caelum.viagens.administrativo.validator.AeroportosOrigemEDestinoNaoExistentesValidator;
 import br.com.caelum.viagens.administrativo.validator.RotaExistenteValidator;
+import br.com.caelum.viagens.support.IfResourceIsFound;
 import io.github.asouza.FormFlow;
 
 @RequestMapping("/rotas")

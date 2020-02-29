@@ -1,10 +1,10 @@
-package br.com.caelum.viagens.administrativo.support;
+package br.com.caelum.viagens.support;
 
 import java.util.Optional;
 
 import org.springframework.util.Assert;
 
-import br.com.caelum.viagens.administrativo.support.exception.ResourceNotFoundException;
+import br.com.caelum.viagens.support.exception.ResourceNotFoundException;
 
 public class IfResourceIsFound {
 

@@ -70,7 +70,7 @@ public class VoosControllerTests {
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository);
-		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotas().get(0);
+		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotas().iterator().next();
 		
 		mockMvc.perform(request).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.nomeCompanhia").value(voo.getNomeCompanhia()))
@@ -201,8 +201,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("Tipo de parada \'ESCALAA\' é inválido."));		
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tipo"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("tipo de parada inválido."));		
 	}
 	
 	@Test
