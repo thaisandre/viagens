@@ -1,6 +1,6 @@
 package br.com.caelum.viagens.voos.validator;
 
-import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.validation.Errors;
@@ -30,11 +30,11 @@ public class RotasComSequenciaLogicaValidator implements Validator {
 
 		if (!newVooDto.getRotas().isEmpty()) {
 
-			List<Route> rotas = newVooDto.getRotas().stream()
+			Set<Route> rotas = newVooDto.getRotas().stream()
 					.map(r -> rotaRepository.findById(r.getRotaId()))
 					.filter(r -> r.isPresent())
 					.map(r -> r.get())
-					.collect(Collectors.toList());
+					.collect(Collectors.toSet());
 			
 			if(!rotas.isEmpty()) {
 				if (!GrafoRotasUtils.temSequenciaLogica(rotas)) {

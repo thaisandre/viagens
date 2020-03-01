@@ -10,7 +10,9 @@ public class VooOutputDto {
 	public static Map<String, Object> criado(Voo voo) {
 		return DataView.of(voo)
 				.add(Voo::getId)
-				.add(Voo::getRotas)
+				.add("rotas", Voo::getRotasEmSequenciaLogica)
+				.add("origemInicial", Voo::getNomeDaOrigem)
+				.add("destinoFinal", Voo::getNomeDoDestino)
 				.add(Voo::getNomeCompanhia)
 				.add(Voo::getLugaresDisponiveis)
 				.build();
@@ -19,9 +21,9 @@ public class VooOutputDto {
 	public static Map<String, Object> detalhes(Voo voo) {
 		return DataView.of(voo)
 				.add(Voo::getId)
-				.add("origem", Voo::getNomeDaOrigem)
-				.add("destino", Voo::getNomeDoDestino)
-				.add(Voo::getRotas)
+				.add("origemInicial", Voo::getNomeDaOrigem)
+				.add("destinoFinal", Voo::getNomeDoDestino)
+				.add("rotas", Voo::getRotasEmSequenciaLogica)
 				.add(Voo::getNomeCompanhia)
 				.add(Voo::getLugaresDisponiveis)
 				.build();

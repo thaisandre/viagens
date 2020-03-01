@@ -73,7 +73,7 @@ public class VoosControllerTests {
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository);
-		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotas().iterator().next();
+		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotasEmSequenciaLogica().iterator().next();
 		
 		mockMvc.perform(request).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.nomeCompanhia").value(voo.getNomeCompanhia()))
@@ -86,7 +86,9 @@ public class VoosControllerTests {
 				.andExpect(jsonPath("$.rotas[0].destino.id").value(rota.getDestino().getId()))
 				.andExpect(jsonPath("$.rotas[0].destino.nome").value(rota.getDestino().getNome()))
 				.andExpect(jsonPath("$.rotas[0].destino.pais.id").value(rota.getDestino().getPais().getId()))
-				.andExpect(jsonPath("$.rotas[0].destino.pais.nome").value(rota.getDestino().getPais().getNome()));
+				.andExpect(jsonPath("$.rotas[0].destino.pais.nome").value(rota.getDestino().getPais().getNome()))
+				.andExpect(jsonPath("$.origemInicial").value(rota.getOrigem().getNome()))
+				.andExpect(jsonPath("$.destinoFinal").value(rota.getDestino().getNome()));
 	}
 
 	@Test
@@ -98,7 +100,7 @@ public class VoosControllerTests {
 		
 		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository);
 		List<Rota> rotas = voo.getRotasEmSequenciaLogica();
-		
+				
 		br.com.caelum.viagens.voos.model.Rota rota1 = rotas.get(0);
 		br.com.caelum.viagens.voos.model.Rota rota2 = rotas.get(1);
 		
@@ -124,7 +126,9 @@ public class VoosControllerTests {
 				.andExpect(jsonPath("$.rotas[1].destino.id").value(rota2.getDestino().getId()))
 				.andExpect(jsonPath("$.rotas[1].destino.nome").value(rota2.getDestino().getNome()))
 				.andExpect(jsonPath("$.rotas[1].destino.pais.id").value(rota2.getDestino().getPais().getId()))
-				.andExpect(jsonPath("$.rotas[1].destino.pais.nome").value(rota2.getDestino().getPais().getNome()));
+				.andExpect(jsonPath("$.rotas[1].destino.pais.nome").value(rota2.getDestino().getPais().getNome()))
+				.andExpect(jsonPath("$.origemInicial").value(rota1.getOrigem().getNome()))
+				.andExpect(jsonPath("$.destinoFinal").value(rota2.getDestino().getNome()));
 	}
 	
 	@Test
@@ -277,10 +281,8 @@ public class VoosControllerTests {
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[0].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[0].mensagem").value("não é permitido repetir rotas em um voo."))
-			.andExpect(jsonPath("$.fieldErrors[1].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[1].mensagem").value("as rotas não possuem uma sequência lógica."));
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não é permitido repetir rotas em um voo."));
 	}
 	
 	@Test
@@ -386,7 +388,8 @@ public class VoosControllerTests {
 	
 	private MockHttpServletRequestBuilder processaRequest(NewVooInputDto newVooDto) throws JsonProcessingException {
 		return post(ENDPOINT).contentType(MediaType.APPLICATION_JSON_VALUE)
-				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR").content(new ObjectMapper().writeValueAsString(newVooDto));
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
+				.content(new ObjectMapper().writeValueAsString(newVooDto));
 	}
 	
 	
