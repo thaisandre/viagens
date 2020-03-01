@@ -11,8 +11,10 @@ import javax.validation.constraints.Positive;
 
 import org.springframework.util.Assert;
 
+import br.com.caelum.viagens.support.Route;
+
 @Entity
-public class Rota {
+public class Rota implements Route{
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -73,5 +75,10 @@ public class Rota {
 
 	public Integer getDuracao() {
 		return duracao;
+	}
+	
+	@Override
+	public String toString() {
+		return this.nome;
 	}
 }

@@ -3,6 +3,7 @@ package br.com.caelum.viagens.voos.controller.dto.input;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import javax.validation.Valid;
@@ -56,8 +57,8 @@ public class NewVooInputDto {
 	
 	public Voo toModel(CompanhiaRepository companhiaRepository, RotaRepository rotaRepository) {
 
-		List<Rota> rotasDoVoo = this.rotas.stream().map(r 
-				-> r.toModel(rotaRepository)).collect(Collectors.toList());
+		Set<Rota> rotasDoVoo = this.rotas.stream().map(r 
+				-> r.toModel(rotaRepository)).collect(Collectors.toSet());
 		
 		Optional<Companhia> companhia = companhiaRepository.findById(companhiaId);
 

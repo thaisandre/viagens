@@ -39,9 +39,10 @@ public class RotaRepetidaValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("Não é permitido repetir rotas em um voo.");
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("não é permitido repetir rotas em um voo.");
 		
 	}
 	
@@ -63,6 +64,6 @@ public class RotaRepetidaValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isEmpty();
+		assertThat(result.getFieldErrors()).isEmpty();
 	}
 }

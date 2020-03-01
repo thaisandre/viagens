@@ -14,7 +14,6 @@ import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewParadaDaRotaInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
-import br.com.caelum.viagens.voos.model.TipoParada;
 
 public class CenariosVoosControllerSetUp {
 	

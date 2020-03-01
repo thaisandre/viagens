@@ -23,7 +23,7 @@ public class RotaRepetidaValidator implements Validator{
 				newVooDto.getRotas().stream().map(r -> r.getRotaId()).collect(Collectors.toSet());
 		
 		if(conjuntoRotasId.size() != newVooDto.getRotas().size()) {
-			errors.reject(null, "Não é permitido repetir rotas em um voo.");
+			errors.rejectValue("rotas", null, "não é permitido repetir rotas em um voo.");
 		}
 	}
 

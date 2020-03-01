@@ -32,18 +32,26 @@ public class RotasComSequenciaLogicaValidatorTests {
 		Aeroporto aeroportoB = new Aeroporto("AeroportoB", new Pais("Brasil"));
 		Aeroporto aeroportoC = new Aeroporto("AeroportoC", new Pais("Chile"));
 		Aeroporto aeroportoU = new Aeroporto("AeroportoU", new Pais("Uruguai"));
+		Aeroporto aeroportoE = new Aeroporto("AeroportoE", new Pais("Equador"));
+		Aeroporto aeroportoP = new Aeroporto("AeroportoP", new Pais("Paraguai"));
 		
 		Rota rota1AtoB = new Rota(aeroportoA, aeroportoB, 120);
 		Rota rota2BtoC = new Rota(aeroportoB, aeroportoC, 120);
 		Rota rota3CtoU = new Rota(aeroportoC, aeroportoU, 120);
 		Rota rota4CtoB = new Rota(aeroportoC, aeroportoB, 120);
 		Rota rota5UtoA = new Rota(aeroportoU, aeroportoA, 120);
+		Rota rota6UtoE = new Rota(aeroportoU, aeroportoE, 120);
+		Rota rota7EtoP = new Rota(aeroportoE, aeroportoP, 120);
+		Rota rota8CtoA = new Rota(aeroportoE, aeroportoP, 120);
 		
 		when(this.rotaRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(rota1AtoB));
 		when(this.rotaRepository.findById(Long.valueOf(2L))).thenReturn(Optional.of(rota2BtoC));
 		when(this.rotaRepository.findById(Long.valueOf(3L))).thenReturn(Optional.of(rota3CtoU));
 		when(this.rotaRepository.findById(Long.valueOf(4L))).thenReturn(Optional.of(rota4CtoB));
 		when(this.rotaRepository.findById(Long.valueOf(5L))).thenReturn(Optional.of(rota5UtoA));
+		when(this.rotaRepository.findById(Long.valueOf(6L))).thenReturn(Optional.of(rota6UtoE));
+		when(this.rotaRepository.findById(Long.valueOf(7L))).thenReturn(Optional.of(rota7EtoP));
+		when(this.rotaRepository.findById(Long.valueOf(8L))).thenReturn(Optional.of(rota8CtoA));
 		
 		this.validator = new RotasComSequenciaLogicaValidator(rotaRepository);
 	}
@@ -70,9 +78,63 @@ public class RotasComSequenciaLogicaValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isEmpty();
+		assertThat(result.getFieldErrors()).isEmpty();
 		
 	}
+	
+	@Test
+	public void deveCadastrarVooComRotasSemOrdemSequencial() {
+		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
+		rotaAtoB.setRotaId(1L);
+		
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
+		
+		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
+		rotaUtoA.setRotaId(5L);
+		
+		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		rotas.add(rotaAtoB);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaUtoA);
+				
+		NewVooInputDto newVooDto = new NewVooInputDto();
+		newVooDto.setRotas(rotas);
+	
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
+		validator.validate(newVooDto, result);
+		
+		assertThat(result.getFieldErrors()).isEmpty();
+	}
+	
+	@Test
+	public void deveDetectarErrorNoCadastroDeVooComRotasComOrigemInicialIgualAoDestinoFinal() {
+		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
+		rotaAtoB.setRotaId(1L);
+		
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
+		
+		NewRotaDoVooInputDto rotaCtoA = new NewRotaDoVooInputDto();
+		rotaCtoA.setRotaId(8L);
+		
+		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		rotas.add(rotaAtoB);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaCtoA);
+				
+		NewVooInputDto newVooDto = new NewVooInputDto();
+		newVooDto.setRotas(rotas);
+		
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
+		validator.validate(newVooDto, result);
+		
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("as rotas não possuem uma sequência lógica.");
+	}
+	
 	
 	@Test
 	public void deveDetectarErrorNoCadastroDeVooComRotasSemLigacao() {
@@ -96,37 +158,42 @@ public class RotasComSequenciaLogicaValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("As rotas não possuem uma sequência lógica.");
-		
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("as rotas não possuem uma sequência lógica.");
 	}
 	
 	@Test
-	public void deveDetectarErrorNoCadastroDeVooComRotasSemOrdemSequencial() {
-		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
-		rotaBtoC.setRotaId(2L);
-		
+	public void deveDetectarErrorNoCadastroDeVooComTrechoDeRotasDesconexas() {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(1L);
 		
-		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
-		rotaUtoA.setRotaId(5L);
+		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
+		rotaBtoC.setRotaId(2L);
+		
+		NewRotaDoVooInputDto rotaUtoE = new NewRotaDoVooInputDto();
+		rotaUtoE.setRotaId(6L);
+		
+		NewRotaDoVooInputDto rotaEtoP = new NewRotaDoVooInputDto();
+		rotaEtoP.setRotaId(7L);
 		
 		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
-		rotas.add(rotaBtoC);
 		rotas.add(rotaAtoB);
-		rotas.add(rotaUtoA);
+		rotas.add(rotaBtoC);
+		rotas.add(rotaUtoE);
+		rotas.add(rotaEtoP);
 				
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setRotas(rotas);
-	
+		
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("As rotas não possuem uma sequência lógica.");
-		
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("as rotas não possuem uma sequência lógica.");
 	}
+	
 }

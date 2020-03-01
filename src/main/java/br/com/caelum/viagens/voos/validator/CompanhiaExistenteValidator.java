@@ -28,7 +28,7 @@ public class CompanhiaExistenteValidator implements Validator{
 		
 		Optional<Companhia> companhiaBuscada = companhiaRepository.findById(newVoo.getCompanhiaId());
 		if(!companhiaBuscada.isPresent()) {
-			errors.rejectValue("companhiaId", null, "Companhia não existe no sistema.");
+			errors.rejectValue("companhiaId", null, "companhia não existe no sistema.");
 		}
 	}
 

@@ -26,11 +26,11 @@ public class RotasComUmaUnicaPernaFinalValidator implements Validator {
 					.filter(r -> r.isPernaFinal()).collect(Collectors.toSet());
 
 			if (rotas.size() > 1) {
-				errors.reject(null, "O array de rotas precisa conter apenas uma única rota final.");
+				errors.rejectValue("rotas", null, "o array de rotas precisa conter apenas uma única rota final.");
 			}
 			
 			if(rotas.size() < 1) {
-				errors.reject(null, "O array de rotas precisa conter pelo menos uma rota final.");
+				errors.rejectValue("rotas", null, "o array de rotas precisa conter pelo menos uma rota final.");
 			}
 		}
 

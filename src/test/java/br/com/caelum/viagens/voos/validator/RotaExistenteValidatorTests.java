@@ -50,6 +50,7 @@ public class RotaExistenteValidatorTests {
 		validator.validate(newVooDto, result);
 		
 		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
 			.isEqualTo("rotaId não existe no sistema.");
 	}

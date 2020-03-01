@@ -1,5 +1,6 @@
 package br.com.caelum.viagens.voos.model;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -8,14 +9,13 @@ import javax.persistence.ManyToOne;
 import javax.persistence.OneToOne;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cascade;
-import org.hibernate.annotations.CascadeType;
 import org.springframework.util.Assert;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
+import br.com.caelum.viagens.support.Route;
 
 @Entity(name="rota_voo")
-public class Rota {
+public class Rota implements Route {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -25,9 +25,12 @@ public class Rota {
 	@ManyToOne
 	private br.com.caelum.viagens.administrativo.model.Rota rota;
 	
-	@Cascade(CascadeType.PERSIST)
-	@OneToOne
+	@OneToOne(cascade = CascadeType.ALL)
 	private Parada parada;
+	
+	@NotNull
+	@ManyToOne
+	private Voo voo;
 	
 	public Rota(@NotNull br.com.caelum.viagens.administrativo.model.Rota rota) {
 		Assert.notNull(rota, "A rota não pode ser nula.");
@@ -63,4 +66,10 @@ public class Rota {
 	public void setParada(Parada parada) {
 		this.parada = parada;
 	}
+
+	public void setVoo(@NotNull Voo voo) {
+		Assert.notNull(voo, "voo não pode ser nulo.");
+		this.voo = voo;
+	}
+
 }

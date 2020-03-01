@@ -37,9 +37,10 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("O array de rotas precisa conter apenas uma única rota final.");
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("o array de rotas precisa conter apenas uma única rota final.");
 	}
 
 	
@@ -63,9 +64,10 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isNotEmpty();
-		assertThat(result.getGlobalErrors().get(0).getDefaultMessage())
-			.isEqualTo("O array de rotas precisa conter pelo menos uma rota final.");
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("o array de rotas precisa conter pelo menos uma rota final.");
 	}
 	
 	@Test
@@ -81,7 +83,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isEmpty();
+		assertThat(result.getFieldErrors()).isEmpty();
 	}
 	
 	public void naoDeveDetectarErrorNoCadastroDeVooComRotasComApenasUmaPernaFinal() {
@@ -102,7 +104,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newVooDto, "newVooDto");
 		validator.validate(newVooDto, result);
 		
-		assertThat(result.getGlobalErrors()).isEmpty();
+		assertThat(result.getFieldErrors()).isEmpty();
 	}
 
 

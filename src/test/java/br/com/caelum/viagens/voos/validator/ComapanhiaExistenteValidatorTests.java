@@ -40,8 +40,9 @@ public class ComapanhiaExistenteValidatorTests {
 		validator.validate(newVooDto, result);
 		
 		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("companhiaId");
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
-			.isEqualTo("Companhia não existe no sistema.");
+			.isEqualTo("companhia não existe no sistema.");
 	}
 	
 	@Test

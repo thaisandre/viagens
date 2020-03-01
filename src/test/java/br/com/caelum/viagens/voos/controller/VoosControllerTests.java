@@ -4,6 +4,8 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.util.List;
+
 import javax.transaction.Transactional;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -27,6 +29,7 @@ import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.setup.CenariosVoosControllerSetUp;
+import br.com.caelum.viagens.voos.model.Rota;
 import br.com.caelum.viagens.voos.model.Voo;
 
 @SpringBootTest
@@ -94,8 +97,10 @@ public class VoosControllerTests {
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository);
-		br.com.caelum.viagens.voos.model.Rota rota1 = voo.getRotas().get(0);
-		br.com.caelum.viagens.voos.model.Rota rota2 = voo.getRotas().get(1);
+		List<Rota> rotas = voo.getRotasEmSequenciaLogica();
+		
+		br.com.caelum.viagens.voos.model.Rota rota1 = rotas.get(0);
+		br.com.caelum.viagens.voos.model.Rota rota2 = rotas.get(1);
 		
 		mockMvc.perform(request).andExpect(status().isCreated())
 				.andExpect(jsonPath("$.nomeCompanhia").value(voo.getNomeCompanhia()))
@@ -133,7 +138,7 @@ public class VoosControllerTests {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("companhiaId"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("Companhia não existe no sistema."));		
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("companhia não existe no sistema."));		
 	}
 	
 	@Test
@@ -271,9 +276,11 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[0]").value("Não é permitido repetir rotas em um voo."))
-			.andExpect(jsonPath("$.globalErrors[1]").value("As rotas não possuem uma sequência lógica."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[0].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[0].mensagem").value("não é permitido repetir rotas em um voo."))
+			.andExpect(jsonPath("$.fieldErrors[1].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[1].mensagem").value("as rotas não possuem uma sequência lógica."));
 	}
 	
 	@Test
@@ -285,22 +292,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[0]").value("O array de rotas precisa conter pelo menos uma rota final."))
-			.andExpect(jsonPath("$.globalErrors[1]").value("A última rota deve ser perna final."));
-	}
-	
-	@Test
-	public void naoDeveSalvarNovoVooComUltimaRotaNaoSendoPernalFinal() throws Exception {
-		NewVooInputDto newVooDto = 
-				cenarios.vooComRotaArgentinaParaBrasilSemParadaERotaBrasilParaChileComParada();
-		
-		RequestBuilder request = processaRequest(newVooDto);
-		
-		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("A última rota deve ser perna final."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter pelo menos uma rota final."));
 	}
 	
 	@Test
@@ -312,9 +306,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[0]").value("O array de rotas precisa conter pelo menos uma rota final."))
-			.andExpect(jsonPath("$.globalErrors[1]").value("A última rota deve ser perna final."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter pelo menos uma rota final."));
 	}
 	
 	@Test
@@ -326,8 +320,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("O array de rotas precisa conter apenas uma única rota final."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter apenas uma única rota final."));
 	}
 	
 	@Test
@@ -338,9 +333,11 @@ public class VoosControllerTests {
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior."));
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.fieldErrors").isArray())
+		.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+		.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
+		
 	}
 	
 	
@@ -354,8 +351,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
 	}
 	
 	@Test
@@ -367,8 +365,9 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[*]").value("As rotas não possuem uma sequência lógica."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
 	}
 	
 	@Test
@@ -380,9 +379,9 @@ public class VoosControllerTests {
 
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.globalErrors").isArray())		
-			.andExpect(jsonPath("$.globalErrors[0]").value("As rotas não possuem uma sequência lógica."))
-			.andExpect(jsonPath("$.globalErrors[1]").value("A origem de uma rota anterior não pode ser igual ao destino de uma rota posterior."));
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
 	}
 	
 	private MockHttpServletRequestBuilder processaRequest(NewVooInputDto newVooDto) throws JsonProcessingException {
