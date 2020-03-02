@@ -196,8 +196,8 @@ public class VoosControllerTests {
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tipo"))
+			.andExpect(jsonPath("$.fieldErrors").isArray())	
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tipo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
 	}
 	
@@ -211,7 +211,7 @@ public class VoosControllerTests {
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tipo"))
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tipo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("tipo de parada inválido."));		
 	}
 	
@@ -225,7 +225,7 @@ public class VoosControllerTests {
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tempo"))
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tempo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
 	}
 	
@@ -239,7 +239,7 @@ public class VoosControllerTests {
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tempo"))
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tempo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
 	}
 	
@@ -253,7 +253,7 @@ public class VoosControllerTests {
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[0].parada.tempo"))
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tempo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
 	}
 	

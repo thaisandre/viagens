@@ -2,8 +2,8 @@ package br.com.caelum.viagens.voos.validator;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -27,7 +27,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		NewRotaDoVooInputDto rota1 = new NewRotaDoVooInputDto();
 		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota1);
 		rotas.add(rota2);
 				
@@ -54,7 +54,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
 		rota2.setParada(parada);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota1);
 		rotas.add(rota2);
 				
@@ -74,7 +74,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 	public void naoDeveDetectarErrorNoCadastroDeVooComRotasComApenasUmaRotaSendoPernaFinal() {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 				
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota);
 				
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -94,7 +94,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		
 		NewRotaDoVooInputDto rota2 = new NewRotaDoVooInputDto();
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota1);
 		rotas.add(rota2);
 		

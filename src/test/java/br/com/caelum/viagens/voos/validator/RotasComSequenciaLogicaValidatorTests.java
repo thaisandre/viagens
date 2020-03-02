@@ -3,9 +3,9 @@ package br.com.caelum.viagens.voos.validator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -67,7 +67,7 @@ public class RotasComSequenciaLogicaValidatorTests {
 		NewRotaDoVooInputDto rotaCtoU = new NewRotaDoVooInputDto();
 		rotaCtoU.setRotaId(3L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaCtoU);
@@ -93,7 +93,7 @@ public class RotasComSequenciaLogicaValidatorTests {
 		NewRotaDoVooInputDto rotaUtoA = new NewRotaDoVooInputDto();
 		rotaUtoA.setRotaId(5L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaUtoA);
@@ -118,7 +118,7 @@ public class RotasComSequenciaLogicaValidatorTests {
 		NewRotaDoVooInputDto rotaCtoA = new NewRotaDoVooInputDto();
 		rotaCtoA.setRotaId(8L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaCtoA);
@@ -147,7 +147,7 @@ public class RotasComSequenciaLogicaValidatorTests {
 		NewRotaDoVooInputDto rotaCtoB = new NewRotaDoVooInputDto();
 		rotaCtoB.setRotaId(4L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaCtoU);
 		rotas.add(rotaCtoB);
@@ -178,7 +178,7 @@ public class RotasComSequenciaLogicaValidatorTests {
 		NewRotaDoVooInputDto rotaEtoP = new NewRotaDoVooInputDto();
 		rotaEtoP.setRotaId(7L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaUtoE);

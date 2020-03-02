@@ -1,7 +1,7 @@
 package br.com.caelum.viagens.voos.controller.setup;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
@@ -86,7 +86,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -105,7 +105,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 
@@ -122,7 +122,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -137,7 +137,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -152,7 +152,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -183,7 +183,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -207,7 +207,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -230,7 +230,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -254,7 +254,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -278,7 +278,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -294,7 +294,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 		rota.setRotaId(1L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -313,7 +313,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaAtoB2 = new NewRotaDoVooInputDto();
 		rotaAtoB2.setRotaId(this.rotaAtoB.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaAtoB2);
 		
@@ -330,7 +330,7 @@ public class CenariosVoosControllerSetUp {
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		rotaAtoB.setParada(this.paradaValida);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -350,7 +350,7 @@ public class CenariosVoosControllerSetUp {
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		rotaBtoC.setParada(this.paradaValida);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -369,7 +369,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		
@@ -389,7 +389,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoA = new NewRotaDoVooInputDto();
 		rotaBtoA.setRotaId(this.rotaBtoA.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoA);
 		
@@ -413,7 +413,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaCtoA = new NewRotaDoVooInputDto();
 		rotaCtoA.setRotaId(this.rotaCtoA.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaCtoA);
@@ -438,7 +438,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaUtoP = new NewRotaDoVooInputDto();
 		rotaUtoP.setRotaId(this.rotaUtoP.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaUtoP);
@@ -463,7 +463,7 @@ public class CenariosVoosControllerSetUp {
 		NewRotaDoVooInputDto rotaBtoA = new NewRotaDoVooInputDto();
 		rotaBtoA.setRotaId(this.rotaBtoA.getId());
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		rotas.add(rotaBtoA);
@@ -484,7 +484,7 @@ public class CenariosVoosControllerSetUp {
 		rotaBtoC.setRotaId(this.rotaBtoC.getId());
 		rotaBtoC.setParada(this.paradaValida);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rotaAtoB);
 		rotas.add(rotaBtoC);
 		

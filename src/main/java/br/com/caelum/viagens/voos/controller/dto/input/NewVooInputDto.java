@@ -1,7 +1,6 @@
 package br.com.caelum.viagens.voos.controller.dto.input;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -22,7 +21,7 @@ public class NewVooInputDto {
 	@NotEmpty
 	@NotNull
 	@Valid
-	private List<NewRotaDoVooInputDto> rotas = new ArrayList<NewRotaDoVooInputDto>();
+	private Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 	
 	@NotNull
 	private Long companhiaId;
@@ -31,7 +30,7 @@ public class NewVooInputDto {
 	@NotNull
 	private Integer lugaresDisponiveis;
 
-	public void setRotas(List<NewRotaDoVooInputDto> rotas) {
+	public void setRotas(Set<NewRotaDoVooInputDto> rotas) {
 		this.rotas = rotas;
 	}
 
@@ -43,7 +42,7 @@ public class NewVooInputDto {
 		this.lugaresDisponiveis = lugaresDisponiveis;
 	}
 	
-	public List<NewRotaDoVooInputDto> getRotas() {
+	public Set<NewRotaDoVooInputDto> getRotas() {
 		return rotas;
 	}
 	

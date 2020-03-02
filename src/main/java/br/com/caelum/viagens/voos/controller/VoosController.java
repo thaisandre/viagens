@@ -50,7 +50,7 @@ public class VoosController {
 				new CompanhiaExistenteValidator(this.companhiaRepository),
 				new RotaExistenteValidator(rotaRepository),
 				new RotasComUmaUnicaPernaFinalValidator(),
-				new RotaRepetidaValidator(),
+				new RotaRepetidaValidator(rotaRepository),
 				new RotasComSequenciaLogicaValidator(rotaRepository));
 	}
 

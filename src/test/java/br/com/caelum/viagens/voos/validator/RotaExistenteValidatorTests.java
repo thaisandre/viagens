@@ -3,9 +3,9 @@ package br.com.caelum.viagens.voos.validator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Optional;
+import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -40,7 +40,7 @@ public class RotaExistenteValidatorTests {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 		rota.setRotaId(10L);
 		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
@@ -59,8 +59,8 @@ public class RotaExistenteValidatorTests {
 	public void naoDeveDetectarErroQuandoCadastrarVooComRotaQueExiste() {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 		rota.setRotaId(1L);
-		
-		List<NewRotaDoVooInputDto> rotas = new ArrayList<>();
+
+		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 		rotas.add(rota);
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
