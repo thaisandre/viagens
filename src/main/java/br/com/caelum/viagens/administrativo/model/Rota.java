@@ -11,10 +11,10 @@ import javax.validation.constraints.Positive;
 
 import org.springframework.util.Assert;
 
-import br.com.caelum.viagens.support.Route;
+import br.com.caelum.viagens.support.PossuiOrigemEDestino;
 
 @Entity
-public class Rota implements Route {
+public class Rota implements PossuiOrigemEDestino {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)

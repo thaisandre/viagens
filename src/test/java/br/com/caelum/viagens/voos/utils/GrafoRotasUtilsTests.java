@@ -13,7 +13,7 @@ import org.junit.jupiter.api.Test;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
-import br.com.caelum.viagens.support.Route;
+import br.com.caelum.viagens.support.PossuiOrigemEDestino;
 
 public class GrafoRotasUtilsTests {
 	
@@ -43,7 +43,7 @@ public class GrafoRotasUtilsTests {
 	@Test
 	public void deveRetornarTrueParaRotasComApenasUmaRota() {
 		
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		
 		assertThat(GrafoRotasUtils.temSequenciaLogica(rotas)).isTrue();
@@ -53,7 +53,7 @@ public class GrafoRotasUtilsTests {
 	@Test
 	public void deveRetornarTrueParaRotasDeVooEmSequenciaLogicaOrdenada() {
 		
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaCtoU);
@@ -64,7 +64,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarTrueParaRotasDeVooEmSequenciaLogicaDesordenada() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaCtoU);
 		rotas.add(this.rotaBtoC);
@@ -75,7 +75,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarTrueParaSetDeRotasComRotasRepetidasComSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoU);
 		rotas.add(this.rotaAtoB);
@@ -85,7 +85,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarFalseParaSetDeRotasComRotasRepetidasSemSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaCtoU);
 		rotas.add(this.rotaAtoB);
@@ -95,7 +95,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarFalseParaRotasComOrigemInicialIgualADestinoFinal() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoU);
 		rotas.add(this.rotaUtoA);
@@ -105,7 +105,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarFalseParaRotasComDuasOrigensIguais() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaBtoU);
@@ -115,7 +115,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarFalseParaRotasComDoisDestinosIguais() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoU);
 		rotas.add(this.rotaCtoU);
@@ -125,7 +125,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarDestinoFinalCorretamente() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaCtoU);
@@ -135,7 +135,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetornarOrigemInicialCorretamente() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaCtoU);
@@ -145,7 +145,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveFalharEmRetornarOrigemInicialComRotasSemSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaBtoA);
 		rotas.add(this.rotaAtoB);
@@ -160,7 +160,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveFalharEmRetornarDestinoFinalComRotasSemSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaCtoU);
 		rotas.add(this.rotaBtoU);
@@ -175,7 +175,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveRetonarRotasEmSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaAtoB);
 		rotas.add(this.rotaCtoU);
 		rotas.add(this.rotaBtoC);
@@ -191,7 +191,7 @@ public class GrafoRotasUtilsTests {
 	
 	@Test
 	public void deveFalharAoRetornarRotasEmSequenciaLogica() {
-		Set<Route> rotas = new HashSet<>();
+		Set<PossuiOrigemEDestino> rotas = new HashSet<>();
 		rotas.add(this.rotaBtoU);
 		rotas.add(this.rotaBtoC);
 		rotas.add(this.rotaCtoU);

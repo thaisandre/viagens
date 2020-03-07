@@ -7,7 +7,7 @@ import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
-import br.com.caelum.viagens.support.Route;
+import br.com.caelum.viagens.support.PossuiOrigemEDestino;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.utils.GrafoRotasUtils;
 
@@ -30,7 +30,7 @@ public class RotasComSequenciaLogicaValidator implements Validator {
 
 		if (!newVooDto.getRotas().isEmpty()) {
 
-			Set<Route> rotas = newVooDto.getRotas().stream()
+			Set<PossuiOrigemEDestino> rotas = newVooDto.getRotas().stream()
 					.map(r -> rotaRepository.findById(r.getRotaId()))
 					.filter(r -> r.isPresent())
 					.map(r -> r.get())

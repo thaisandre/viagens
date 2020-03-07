@@ -13,13 +13,12 @@ import javax.validation.constraints.Positive;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
-import br.com.caelum.viagens.voos.model.Rota;
+import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
 
 public class NewVooInputDto {
 	
 	@NotEmpty
-	@NotNull
 	@Valid
 	private Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
 	
@@ -56,7 +55,7 @@ public class NewVooInputDto {
 	
 	public Voo toModel(CompanhiaRepository companhiaRepository, RotaRepository rotaRepository) {
 
-		Set<Rota> rotasDoVoo = this.rotas.stream().map(r 
+		Set<RotaSemVoo> rotasDoVoo = this.rotas.stream().map(r 
 				-> r.toModel(rotaRepository)).collect(Collectors.toSet());
 		
 		Optional<Companhia> companhia = companhiaRepository.findById(companhiaId);

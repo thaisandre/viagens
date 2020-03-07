@@ -6,7 +6,7 @@ import javax.validation.Valid;
 import javax.validation.constraints.NotNull;
 
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
-import br.com.caelum.viagens.voos.model.Rota;
+import br.com.caelum.viagens.voos.model.RotaSemVoo;
 
 public class NewRotaDoVooInputDto {
 
@@ -36,14 +36,14 @@ public class NewRotaDoVooInputDto {
 		return parada == null;
 	}
 	
-	public Rota toModel(RotaRepository rotaRepository) {
+	public RotaSemVoo toModel(RotaRepository rotaRepository) {
 		Optional<br.com.caelum.viagens.administrativo.model.Rota> rota = rotaRepository.findById(rotaId);
-		Rota rotaVoo = new Rota(rota.get());
+		RotaSemVoo rotaDoVoo = new RotaSemVoo(rota.get());
 
 		if (parada != null) {
-			rotaVoo.setParada(parada.ToModel());
+			rotaDoVoo.setParada(parada.ToModel());
 		}
-		return rotaVoo;
+		return rotaDoVoo;
 	}
 	
 }

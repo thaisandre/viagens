@@ -43,9 +43,9 @@ public class VooTests {
 	@Test
 	public void deveInstanciarVooComApenasUmaRotaValida() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(rotaVooAtoB);
 		
 		Voo voo = new Voo(rotas , this.companhia, 100);
@@ -55,11 +55,11 @@ public class VooTests {
 	@Test
 	public void deveInstanciarVooComRotasEmSequenciaLogica() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoC = new Rota(rotaBtoC, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooCtoU = new Rota(rotaCtoU);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoC = new RotaSemVoo(rotaBtoC, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooCtoU = new RotaSemVoo(rotaCtoU);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(rotaVooAtoB);
 		rotas.add(rotaVooBtoC);
 		rotas.add(rotaVooCtoU);
@@ -71,11 +71,11 @@ public class VooTests {
 	@Test
 	public void deveRetornarRotasEmSequenciaLogica() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoC = new Rota(rotaBtoC, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooCtoU = new Rota(rotaCtoU);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoC = new RotaSemVoo(rotaBtoC, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooCtoU = new RotaSemVoo(rotaCtoU);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(List.of(rotaVooAtoB, rotaVooBtoC, rotaVooCtoU));
 		
 		Voo voo = new Voo(rotas , this.companhia, 100);
@@ -84,20 +84,23 @@ public class VooTests {
 		
 		assertThat(rotasEmSequenciaLogica).isNotEmpty();
 		assertThat(rotasEmSequenciaLogica.size()).isEqualTo(3);
-		assertThat(rotasEmSequenciaLogica.get(0)).isEqualTo(rotaVooAtoB);
-		assertThat(rotasEmSequenciaLogica.get(1)).isEqualTo(rotaVooBtoC);
-		assertThat(rotasEmSequenciaLogica.get(2)).isEqualTo(rotaVooCtoU);
+		assertThat(rotasEmSequenciaLogica.get(0).getOrigem()).isEqualTo(rotaVooAtoB.getOrigem());
+		assertThat(rotasEmSequenciaLogica.get(0).getDestino()).isEqualTo(rotaVooAtoB.getDestino());
+		assertThat(rotasEmSequenciaLogica.get(1).getOrigem()).isEqualTo(rotaVooBtoC.getOrigem());
+		assertThat(rotasEmSequenciaLogica.get(1).getDestino()).isEqualTo(rotaVooBtoC.getDestino());
+		assertThat(rotasEmSequenciaLogica.get(2).getOrigem()).isEqualTo(rotaVooCtoU.getOrigem());
+		assertThat(rotasEmSequenciaLogica.get(2).getDestino()).isEqualTo(rotaVooCtoU.getDestino());
 	}
 	
 	
 	@Test
 	public void naoDeveInstanciarVooComRotasComDoisCandidatosADestino() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoC = new Rota(rotaBtoC, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoU = new Rota(rotaBtoU);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoC = new RotaSemVoo(rotaBtoC, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoU = new RotaSemVoo(rotaBtoU);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoC, rotaVooBtoU));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -110,11 +113,11 @@ public class VooTests {
 	@Test
 	public void naoDeveInstanciarVooComRotasComDoisCandidatosAOrigem() {
 		
-		Rota rotaVooBtoU = new Rota(rotaBtoU, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooCtoU = new Rota(rotaCtoU, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooUtoA = new Rota(rotaUtoA);
+		RotaSemVoo rotaVooBtoU = new RotaSemVoo(rotaBtoU, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooCtoU = new RotaSemVoo(rotaCtoU, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooUtoA = new RotaSemVoo(rotaUtoA);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(Set.of(rotaVooBtoU, rotaVooCtoU, rotaVooUtoA));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -127,10 +130,10 @@ public class VooTests {
 	@Test
 	public void naoDeveInstanciarVooComRotasComOrigemIgualADestino() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoA = new Rota(rotaBtoA);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoA = new RotaSemVoo(rotaBtoA);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoA));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -142,11 +145,11 @@ public class VooTests {
 	
 	@Test
 	public void naoDeveInstanciarVooComRotasComMaisDeUmaPernaFinal() {
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoC = new Rota(rotaBtoC);
-		Rota rotaVooCtoU = new Rota(rotaCtoU);
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoC = new RotaSemVoo(rotaBtoC);
+		RotaSemVoo rotaVooCtoU = new RotaSemVoo(rotaCtoU);
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoC, rotaVooCtoU));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
@@ -159,10 +162,10 @@ public class VooTests {
 	@Test
 	public void naoDeveInstanciarVooComRotasSemPernaFinal() {
 		
-		Rota rotaVooAtoB = new Rota(rotaAtoB, new Parada(40, TipoParada.ESCALA));
-		Rota rotaVooBtoC = new Rota(rotaBtoC, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooAtoB = new RotaSemVoo(rotaAtoB, new Parada(40, TipoParada.ESCALA));
+		RotaSemVoo rotaVooBtoC = new RotaSemVoo(rotaBtoC, new Parada(40, TipoParada.ESCALA));
 		
-		Set<Rota> rotas = new HashSet<Rota>();
+		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(rotaVooAtoB);
 		rotas.add(rotaVooBtoC);
 		

@@ -3,6 +3,7 @@ package br.com.caelum.viagens.voos.model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
 import javax.persistence.Entity;
@@ -43,7 +44,7 @@ public class Voo {
 	public Voo() {
 	}
 
-	public Voo(@NotNull Set<Rota> rotas, @NotNull Companhia companhia, @NotNull @Positive Integer lugaresDisponiveis) {
+	public Voo(@NotNull Set<RotaSemVoo> rotas, @NotNull Companhia companhia, @NotNull @Positive Integer lugaresDisponiveis) {
 		Assert.notNull(rotas, "A lista de rotas não pode ser nula");
 		Assert.notEmpty(rotas, "A lista de rotas não pode ser vazia");
 		Assert.isTrue(GrafoRotasUtils.temSequenciaLogica(rotas),
@@ -52,9 +53,8 @@ public class Voo {
 		Assert.notNull(lugaresDisponiveis, "O número de lugares disponíveis não pode ser nulo");
 		Assert.isTrue(lugaresDisponiveis > 0, () -> "O número de lugares disponíveis deve ser positivo.");
 
-		this.rotas = rotas;
+		this.rotas = rotas.stream().map(r -> new Rota(r.getRota(), this, r.getParada())).collect(Collectors.toSet());
 		Assert.isTrue(temApenasUmaPernaFinal(), "rotas deve conter uma única perna final.");
-		this.rotas.forEach(r -> r.setVoo(this));
 		
 		this.companhia = companhia;
 		this.lugaresDisponiveis = lugaresDisponiveis;
