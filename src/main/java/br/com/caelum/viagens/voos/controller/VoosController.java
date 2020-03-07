@@ -49,8 +49,8 @@ public class VoosController {
 		webDataBinder.addValidators(
 				new CompanhiaExistenteValidator(this.companhiaRepository),
 				new RotaExistenteValidator(rotaRepository),
-				new RotasComUmaUnicaPernaFinalValidator(),
 				new RotaRepetidaValidator(rotaRepository),
+				new RotasComUmaUnicaPernaFinalValidator(),
 				new RotasComSequenciaLogicaValidator(rotaRepository));
 	}
 

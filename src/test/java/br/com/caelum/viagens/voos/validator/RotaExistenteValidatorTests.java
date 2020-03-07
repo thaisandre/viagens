@@ -4,7 +4,6 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -12,8 +11,6 @@ import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
 import org.springframework.validation.BeanPropertyBindingResult;
 
-import br.com.caelum.viagens.administrativo.model.Aeroporto;
-import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
@@ -27,16 +24,17 @@ public class RotaExistenteValidatorTests {
 	@BeforeEach
 	public void setUp() {
 		rotaRepository = Mockito.mock(RotaRepository.class);
+		Rota rota = Mockito.mock(Rota.class);
 		
-		Rota rota = new Rota(new Aeroporto("AeroportoA", new Pais("Argentina")), 
-				new Aeroporto("AeroportoB", new Pais("Brasil")), 100);
-		when(rotaRepository.findById(1L)).thenReturn(Optional.of(rota ));
+		when(rota.getId()).thenReturn(1L);
+		when(rotaRepository.findAllById(Set.of(1L))).thenReturn(Set.of(rota));
+		when(rotaRepository.findAllById(Set.of(10L))).thenReturn(Set.of());
 		
 		this.validator = new RotaExistenteValidator(rotaRepository);
 	}
 	
 	@Test
-	public void deveDetectarErroQuandoCadastrarComRotaQueNaoExiste() {
+	public void deveDetectarErroQuandoCadastrarVooComUmaRotaQueNaoExiste() {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 		rota.setRotaId(10L);
 		
@@ -52,11 +50,11 @@ public class RotaExistenteValidatorTests {
 		assertThat(result.getFieldErrors()).isNotEmpty();
 		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
-			.isEqualTo("rotaId não existe no sistema.");
+			.isEqualTo("rotaId 10 não existe no sistema.");
 	}
 	
 	@Test
-	public void naoDeveDetectarErroQuandoCadastrarVooComRotaQueExiste() {
+	public void naoDeveDetectarErroQuandoCadastrarVooComRotaExistente() {
 		NewRotaDoVooInputDto rota = new NewRotaDoVooInputDto();
 		rota.setRotaId(1L);
 

@@ -20,17 +20,17 @@ public class RotasComUmaUnicaPernaFinalValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
 
-		if (newVooDto.getRotas() != null && !newVooDto.getRotas().isEmpty()) {
+		if (!errors.hasErrors()) {
 
 			Set<NewRotaDoVooInputDto> rotas = newVooDto.getRotas().stream()
 					.filter(r -> r.isPernaFinal()).collect(Collectors.toSet());
 
 			if (rotas.size() > 1) {
-				errors.rejectValue("rotas", null, "o array de rotas precisa conter apenas uma única rota final.");
+				errors.rejectValue("rotas", null, "a lista de rotas precisa conter apenas uma única rota final (sem parada).");
 			}
 			
 			if(rotas.size() < 1) {
-				errors.rejectValue("rotas", null, "o array de rotas precisa conter pelo menos uma rota final.");
+				errors.rejectValue("rotas", null, "a lista de rotas precisa conter pelo menos uma rota final (sem parada).");
 			}
 		}
 

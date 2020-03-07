@@ -40,7 +40,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		assertThat(result.getFieldErrors()).isNotEmpty();
 		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
-			.isEqualTo("o array de rotas precisa conter apenas uma única rota final.");
+			.isEqualTo("a lista de rotas precisa conter apenas uma única rota final (sem parada).");
 	}
 
 	
@@ -67,7 +67,7 @@ public class RotasComUmaUnicaPernaFinalValidatorTests {
 		assertThat(result.getFieldErrors()).isNotEmpty();
 		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("rotas");
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
-			.isEqualTo("o array de rotas precisa conter pelo menos uma rota final.");
+			.isEqualTo("a lista de rotas precisa conter pelo menos uma rota final (sem parada).");
 	}
 	
 	@Test

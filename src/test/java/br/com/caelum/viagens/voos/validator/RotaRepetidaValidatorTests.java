@@ -3,8 +3,8 @@ package br.com.caelum.viagens.voos.validator;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.when;
 
+import java.util.Arrays;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
 
 import org.junit.jupiter.api.BeforeEach;
@@ -35,8 +35,8 @@ public class RotaRepetidaValidatorTests {
 		Rota rota1AtoB = new Rota(aeroportoA, aeroportoB, 120);
 		Rota rota2BtoC = new Rota(aeroportoB, aeroportoC, 120);
 	
-		when(this.rotaRepository.findById(Long.valueOf(1L))).thenReturn(Optional.of(rota1AtoB));
-		when(this.rotaRepository.findById(Long.valueOf(2L))).thenReturn(Optional.of(rota2BtoC));
+		when(this.rotaRepository.findAllById(Arrays.asList(1L, 1L))).thenReturn(Arrays.asList(rota1AtoB));
+		when(this.rotaRepository.findAllById(Arrays.asList(1L, 2L))).thenReturn(Arrays.asList(rota1AtoB, rota2BtoC));
 		
 		this.validator = new RotaRepetidaValidator(rotaRepository);
 	}

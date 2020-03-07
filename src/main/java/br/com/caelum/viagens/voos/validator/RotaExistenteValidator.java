@@ -1,12 +1,13 @@
 package br.com.caelum.viagens.voos.validator;
 
-import java.util.List;
-import java.util.Optional;
+import java.util.Collection;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 
@@ -27,14 +28,19 @@ public class RotaExistenteValidator implements Validator {
 	public void validate(Object target, Errors errors) {
 		NewVooInputDto newVooDto = (NewVooInputDto) target;
 
-		List<Optional<br.com.caelum.viagens.administrativo.model.Rota>> rotas = newVooDto.getRotas().stream()
-				.map(r -> rotaRepository.findById(r.getRotaId())).collect(Collectors.toList());
+		if(!errors.hasErrors()) {
+			Set<Long> idsDto = newVooDto.getRotas().stream()
+					.map(r -> r.getRotaId()).collect(Collectors.toSet());
 
-		rotas.forEach(r -> {
-			if (!r.isPresent()) {
-				errors.rejectValue("rotas", null, "rotaId não existe no sistema.");
-			}
-		});
+			Set<Long> rotasIds = ((Collection<Rota>) rotaRepository.findAllById(idsDto))
+					.stream().map(r -> r.getId()).collect(Collectors.toSet());
+
+			idsDto.forEach(id -> {
+				if(!rotasIds.contains(id)) {
+					errors.rejectValue("rotas", null, "rotaId " + id + " não existe no sistema.");
+				}
+			});
+		}
 	}
 
 }

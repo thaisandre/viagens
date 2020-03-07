@@ -261,14 +261,14 @@ public class VoosControllerTests {
 	public void naoDeveSalvarNovoVooComRotaQueNaoExiste() throws Exception {	
 		NewVooInputDto newVooDto = 
 				cenarios.vooComRotaInexistente();
-
+		
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("rotaId não existe no sistema."));		
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("rotaId 1 não existe no sistema."));		
 	}
 	
 	@Test
@@ -296,7 +296,7 @@ public class VoosControllerTests {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter pelo menos uma rota final."));
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter pelo menos uma rota final (sem parada)."));
 	}
 	
 	@Test
@@ -310,7 +310,7 @@ public class VoosControllerTests {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter pelo menos uma rota final."));
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter pelo menos uma rota final (sem parada)."));
 	}
 	
 	@Test
@@ -324,7 +324,7 @@ public class VoosControllerTests {
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("o array de rotas precisa conter apenas uma única rota final."));
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter apenas uma única rota final (sem parada)."));
 	}
 	
 	@Test
