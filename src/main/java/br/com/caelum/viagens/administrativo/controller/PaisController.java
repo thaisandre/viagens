@@ -22,8 +22,8 @@ import br.com.caelum.viagens.administrativo.controller.dto.input.NewPaisInputDto
 import br.com.caelum.viagens.administrativo.controller.dto.output.PaisOutputDto;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
-import br.com.caelum.viagens.administrativo.support.IfResourceIsFound;
 import br.com.caelum.viagens.administrativo.validator.PaisExistenteValidator;
+import br.com.caelum.viagens.support.IfResourceIsFound;
 import io.github.asouza.FormFlow;
 
 @RestController

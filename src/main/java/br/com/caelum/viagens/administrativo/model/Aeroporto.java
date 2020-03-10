@@ -71,5 +71,10 @@ public class Aeroporto {
 			return false;
 		return true;
 	}
+	
+	@Override
+	public String toString() {
+		return this.nome;
+	}
 
 }

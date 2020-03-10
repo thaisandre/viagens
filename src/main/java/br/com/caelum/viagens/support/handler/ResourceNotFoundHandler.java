@@ -1,12 +1,12 @@
-package br.com.caelum.viagens.administrativo.support.handler;
+package br.com.caelum.viagens.support.handler;
 
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
 import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 
-import br.com.caelum.viagens.administrativo.support.dto.ResourceNotFoundDto;
-import br.com.caelum.viagens.administrativo.support.exception.ResourceNotFoundException;
+import br.com.caelum.viagens.support.dto.ResourceNotFoundDto;
+import br.com.caelum.viagens.support.exception.ResourceNotFoundException;
 
 @RestControllerAdvice
 public class ResourceNotFoundHandler {

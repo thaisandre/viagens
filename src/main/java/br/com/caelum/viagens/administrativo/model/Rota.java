@@ -11,8 +11,10 @@ import javax.validation.constraints.Positive;
 
 import org.springframework.util.Assert;
 
+import br.com.caelum.viagens.support.PossuiOrigemEDestino;
+
 @Entity
-public class Rota {
+public class Rota implements PossuiOrigemEDestino {
 
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -42,7 +44,7 @@ public class Rota {
 	}
 
 	public Rota(@NotBlank String nome, @NotNull Aeroporto origem, @NotNull Aeroporto destino,
-			@NotNull @Positive Integer duracao) {		
+			@NotNull @Positive Integer duracao) {
 		Assert.hasText(nome, "nome não pode ser vazio.");
 		Assert.notNull(origem, "origem não pode ser nulo.");
 		Assert.notNull(destino, "destino não pode ser nulo.");
@@ -74,4 +76,53 @@ public class Rota {
 	public Integer getDuracao() {
 		return duracao;
 	}
+
+	@Override
+	public String toString() {
+		return this.nome;
+	}
+
+	@Override
+	public int hashCode() {
+		final int prime = 31;
+		int result = 1;
+		result = prime * result + ((destino == null) ? 0 : destino.hashCode());
+		result = prime * result + ((duracao == null) ? 0 : duracao.hashCode());
+		result = prime * result + ((nome == null) ? 0 : nome.hashCode());
+		result = prime * result + ((origem == null) ? 0 : origem.hashCode());
+		return result;
+	}
+
+	@Override
+	public boolean equals(Object obj) {
+		if (this == obj)
+			return true;
+		if (obj == null)
+			return false;
+		if (getClass() != obj.getClass())
+			return false;
+		Rota other = (Rota) obj;
+		if (destino == null) {
+			if (other.destino != null)
+				return false;
+		} else if (!destino.equals(other.destino))
+			return false;
+		if (duracao == null) {
+			if (other.duracao != null)
+				return false;
+		} else if (!duracao.equals(other.duracao))
+			return false;
+		if (nome == null) {
+			if (other.nome != null)
+				return false;
+		} else if (!nome.equals(other.nome))
+			return false;
+		if (origem == null) {
+			if (other.origem != null)
+				return false;
+		} else if (!origem.equals(other.origem))
+			return false;
+		return true;
+	}
+
 }
