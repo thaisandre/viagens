@@ -19,7 +19,7 @@ import br.com.caelum.viagens.voos.repository.VooRepository;
 public class NewPassagemInputDto {
 	
 	@NotNull
-	private Long voo_id;
+	private Long vooId;
 	
 	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
 	@Future
@@ -29,9 +29,13 @@ public class NewPassagemInputDto {
 	@Positive
 	@NotNull
 	private BigDecimal valor;
-
-	public void setVoo_id(Long voo_id) {
-		this.voo_id = voo_id;
+	
+	public Long getVooId() {
+		return vooId;
+	}
+	
+	public void setVooId(Long vooId) {
+		this.vooId = vooId;
 	}
 
 	public void setDataEHoraDePartida(LocalDateTime dataEHoraDePartida) {
@@ -43,7 +47,7 @@ public class NewPassagemInputDto {
 	}
 
 	public Passagem toModel(VooRepository vooRepository) {
-		Optional<Voo> voo = vooRepository.findById(this.voo_id);
+		Optional<Voo> voo = vooRepository.findById(this.vooId);
 		return new Passagem(voo.get(), this.dataEHoraDePartida, this.valor);
 	}
 	
