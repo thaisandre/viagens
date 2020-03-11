@@ -49,6 +49,20 @@ public class Passagem {
 		this.valor = valor;
 	}
 	
+	public Long getId() {
+		return id;
+	}
 	
+	public Voo getVoo() {
+		return voo;
+	}
+	
+	public LocalDateTime getDataEHoraDePartida() {
+		return dataEHoraDePartida;
+	}
+	
+	public BigDecimal getValor() {
+		return valor;
+	}
 	
 }
