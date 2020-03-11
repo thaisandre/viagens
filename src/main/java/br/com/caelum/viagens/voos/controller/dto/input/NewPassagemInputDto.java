@@ -51,5 +51,4 @@ public class NewPassagemInputDto {
 		return new Passagem(voo.get(), this.dataEHoraDePartida, this.valor);
 	}
 	
-	
 }
