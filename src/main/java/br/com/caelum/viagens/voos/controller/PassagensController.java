@@ -23,7 +23,7 @@ import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.controller.dto.output.PassagemOutputDto;
 import br.com.caelum.viagens.voos.model.Passagem;
 import br.com.caelum.viagens.voos.repository.VooRepository;
-import br.com.caelum.viagens.voos.validator.VooExistenteValidator;
+import br.com.caelum.viagens.voos.validator.VooExistenteValidatorTests;
 import io.github.asouza.FormFlow;
 
 @RequestMapping("/passagens")
@@ -38,7 +38,7 @@ public class PassagensController {
 	
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
-		webDataBinder.addValidators(new VooExistenteValidator(vooRepository));
+		webDataBinder.addValidators(new VooExistenteValidatorTests(vooRepository));
 	}
 	
 	@PostMapping
