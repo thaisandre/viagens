@@ -202,20 +202,6 @@ public class VoosControllerTests {
 	}
 	
 	@Test
-	public void naoDeveSalvarNovoVooComRotaComParadaComTipoInvalido() throws Exception {	
-		NewVooInputDto newVooDto = 
-				cenarios.vooComRotaArgentinaParaBrasilComTipoDeParadaInvalidoERotaBrasilParaChile();
-
-		RequestBuilder request = processaRequest(newVooDto);
-		
-		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tipo"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("tipo de parada inválido."));		
-	}
-	
-	@Test
 	public void naoDeveSalvarNovoVooComRotaComParadaSemTempo() throws Exception {	
 		NewVooInputDto newVooDto = 
 				cenarios.vooComRotaArgentinaParaBrasilComParadaSemTempoERotaBrasilParaChile();

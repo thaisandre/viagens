@@ -25,9 +25,9 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 
-import com.fasterxml.jackson.core.JsonGenerator.Feature;
-import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
@@ -38,7 +38,6 @@ import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
-import br.com.caelum.viagens.voos.model.Passagem;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
 import br.com.caelum.viagens.voos.repository.VooRepository;
@@ -101,46 +100,39 @@ public class PassagensControllerTests {
 	public void deveSalvarNovaPassagemComDadosValidados() throws Exception {
 		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
 		passagemInputDto.setVooId(this.voo.getId());
-		passagemInputDto.setDataEHoraDePartida(LocalDateTime.now().plusDays(2));
+		LocalDateTime dataEHora = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHora);
 		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
 		
-		ObjectMapper mapper = new ObjectMapper();
-		mapper.enable(Feature.WRITE_BIGDECIMAL_AS_PLAIN);
-		mapper.enable(DeserializationFeature.USE_BIG_DECIMAL_FOR_FLOATS);
-		
-		System.out.println(mapper.canSerialize(BigDecimal.class));
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
+		SimpleModule module = new SimpleModule().addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
+	    ObjectMapper objectMapper = new ObjectMapper().registerModule(module);
+	    
 		RequestBuilder request = post(ENDPOINT)
 				.contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
-				.content(mapper.writeValueAsString(passagemInputDto));
+				.content(objectMapper.writeValueAsString(passagemInputDto));
 		
-		Passagem passagem = passagemInputDto.toModel(vooRepository);
 		List<br.com.caelum.viagens.voos.model.Rota> rotas 
-			= passagem.getVoo().getRotasEmSequenciaLogica();
+			= this.voo.getRotasEmSequenciaLogica();
 		
-
-		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm:ss");
-		String dataFormatada = passagem.getDataEHoraDePartida().format(formatter);	
-	
 		mockMvc.perform(request).andExpect(status().isCreated())
-			.andExpect(jsonPath("$.dataEHoraDePartida").value(dataFormatada))
-			.andExpect(jsonPath("$.valor").value(passagem.getValor()))
-			.andExpect(jsonPath("$.voos.id").value(this.voo.getId()))
-			.andExpect(jsonPath("$.voos.lugaresDisponiveis").value(passagem.getVoo().getLugaresDisponiveis()))
-			.andExpect(jsonPath("$.voos.nomeCompanhia").value(passagem.getVoo().getNomeCompanhia()))
-			.andExpect(jsonPath("$.voos.nomeDaOrigem").value(passagem.getVoo().getNomeDaOrigem()))
-			.andExpect(jsonPath("$.voos.nomeDoDestino").value(passagem.getVoo().getNomeDoDestino()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].pernaFinal").value(rotas.get(0).isPernaFinal()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].parada.tempo").value(rotas.get(0).getParada().getTempo()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].parada.tipo").value(rotas.get(0).getParada().getTipo().toString()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].origem.id").value(rotas.get(0).getOrigem().getId()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].origem.nome").value(rotas.get(0).getOrigem().getNome()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].origem.pais.id").value(rotas.get(0).getOrigem().getPais().getId()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].origem.pais.nome").value(rotas.get(0).getOrigem().getPais().getNome()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].destino.id").value(rotas.get(0).getDestino().getId()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].destino.nome").value(rotas.get(0).getDestino().getNome()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].destino.pais.id").value(rotas.get(0).getDestino().getPais().getId()))
-			.andExpect(jsonPath("$.voos.rotasEmSequenciaLogica[0].destino.pais.nome").value(rotas.get(0).getDestino().getPais().getNome()));
+			.andExpect(jsonPath("$.dataEHoraDePartida").value(dataEHora.format(formatter)))
+			.andExpect(jsonPath("$.valor").value(900.00))
+			.andExpect(jsonPath("$.voo.id").value(this.voo.getId()))
+			.andExpect(jsonPath("$.voo.lugaresDisponiveis").value(this.voo.getLugaresDisponiveis()))
+			.andExpect(jsonPath("$.voo.nomeCompanhia").value(this.voo.getNomeCompanhia()))
+			.andExpect(jsonPath("$.voo.nomeDaOrigem").value(this.voo.getNomeDaOrigem()))
+			.andExpect(jsonPath("$.voo.nomeDoDestino").value(this.voo.getNomeDoDestino()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].pernaFinal").value(rotas.get(0).isPernaFinal()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].origem.id").value(rotas.get(0).getOrigem().getId()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].origem.nome").value(rotas.get(0).getOrigem().getNome()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].origem.pais.id").value(rotas.get(0).getOrigem().getPais().getId()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].origem.pais.nome").value(rotas.get(0).getOrigem().getPais().getNome()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].destino.id").value(rotas.get(0).getDestino().getId()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].destino.nome").value(rotas.get(0).getDestino().getNome()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].destino.pais.id").value(rotas.get(0).getDestino().getPais().getId()))
+			.andExpect(jsonPath("$.voo.rotasEmSequenciaLogica[0].destino.pais.nome").value(rotas.get(0).getDestino().getPais().getNome()));
 		
 	}
 }

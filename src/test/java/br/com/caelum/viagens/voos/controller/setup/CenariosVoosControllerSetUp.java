@@ -14,6 +14,7 @@ import br.com.caelum.viagens.administrativo.repository.RotaRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewParadaDaRotaInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
+import br.com.caelum.viagens.voos.model.TipoParada;
 
 public class CenariosVoosControllerSetUp {
 	
@@ -53,7 +54,7 @@ public class CenariosVoosControllerSetUp {
 		
 		this.paradaValida = new NewParadaDaRotaInputDto();
 		this.paradaValida.setTempo(40);
-		this.paradaValida.setTipo("ESCALA");
+		this.paradaValida.setTipo(TipoParada.ESCALA);
 		
 		this.populaBanco();
 		
@@ -195,33 +196,9 @@ public class CenariosVoosControllerSetUp {
 		return newVooDto;
 	}
 	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComTipoDeParadaInvalidoERotaBrasilParaChile() {
-		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
-		parada.setTempo(40);
-		parada.setTipo("ESCALAA");
-		
-		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
-		rotaAtoB.setRotaId(this.rotaAtoB.getId());
-		rotaAtoB.setParada(parada);
-		
-		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
-		rotaBtoC.setRotaId(this.rotaBtoC.getId());
-		
-		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
-		rotas.add(rotaAtoB);
-		rotas.add(rotaBtoC);
-		
-		NewVooInputDto newVooDto = new NewVooInputDto();
-		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
-		newVooDto.setRotas(rotas);
-		
-		return newVooDto;
-	}
-	
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaSemTempoERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
@@ -245,7 +222,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaComTempoIgualAZeroERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
 		parada.setTempo(0);
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
@@ -269,7 +246,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaComTempoNegativoERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
 		parada.setTempo(-10);
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());

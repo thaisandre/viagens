@@ -26,6 +26,7 @@ public class NewPassagemInputDto {
 	@NotNull
 	private LocalDateTime dataEHoraDePartida;
 	
+	@JsonFormat(shape= Shape.NUMBER_FLOAT)
 	@Positive
 	@NotNull
 	private BigDecimal valor;
