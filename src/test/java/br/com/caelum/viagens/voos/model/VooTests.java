@@ -13,6 +13,8 @@ import org.junit.jupiter.api.Test;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
 
 public class VooTests {
 	
@@ -23,6 +25,7 @@ public class VooTests {
 	private br.com.caelum.viagens.administrativo.model.Rota rotaCtoU;
 	private br.com.caelum.viagens.administrativo.model.Rota rotaBtoU;
 	private br.com.caelum.viagens.administrativo.model.Rota rotaUtoA;
+	private Aeronave aeronave;
 	
 	@BeforeEach
 	public void setUp() {
@@ -39,6 +42,8 @@ public class VooTests {
 		this.rotaUtoA = new br.com.caelum.viagens.administrativo.model.Rota(aeroportoU, aeroportoA, 120);
 		
 		this.companhia = new Companhia("Companhia", new Pais("Argentina"));
+		
+		this.aeronave = new Aeronave(Modelo.ATR40);
 	}
 	@Test
 	public void deveInstanciarVooComApenasUmaRotaValida() {
@@ -48,7 +53,7 @@ public class VooTests {
 		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(rotaVooAtoB);
 		
-		Voo voo = new Voo(rotas , this.companhia, 100);
+		Voo voo = new Voo(rotas , this.companhia, this.aeronave);
 		assertThat(voo).isNotNull();
 	}
 	
@@ -64,7 +69,7 @@ public class VooTests {
 		rotas.add(rotaVooBtoC);
 		rotas.add(rotaVooCtoU);
 		
-		Voo voo = new Voo(rotas , this.companhia, 100);
+		Voo voo = new Voo(rotas , this.companhia, this.aeronave);
 		assertThat(voo).isNotNull();
 	}
 	
@@ -78,7 +83,7 @@ public class VooTests {
 		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.addAll(List.of(rotaVooAtoB, rotaVooBtoC, rotaVooCtoU));
 		
-		Voo voo = new Voo(rotas , this.companhia, 100);
+		Voo voo = new Voo(rotas , this.companhia, this.aeronave);
 			
 		List<Rota> rotasEmSequenciaLogica = voo.getRotasEmSequenciaLogica();
 		
@@ -104,7 +109,7 @@ public class VooTests {
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoC, rotaVooBtoU));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new Voo(rotas, this.companhia, 100);
+			new Voo(rotas, this.companhia, this.aeronave);
 		});
 		
 	    assertThat(exception.getMessage()).isEqualTo("rotas devem possuir uma sequência lógica.");
@@ -121,7 +126,7 @@ public class VooTests {
 		rotas.addAll(Set.of(rotaVooBtoU, rotaVooCtoU, rotaVooUtoA));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new Voo(rotas, this.companhia, 100);
+			new Voo(rotas, this.companhia, this.aeronave);
 		});
 	 
 	    assertThat(exception.getMessage()).isEqualTo("rotas devem possuir uma sequência lógica.");
@@ -137,7 +142,7 @@ public class VooTests {
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoA));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new Voo(rotas, this.companhia, 100);
+			new Voo(rotas, this.companhia, this.aeronave);
 		});
 		
 	    assertThat(exception.getMessage()).isEqualTo("rotas devem possuir uma sequência lógica.");
@@ -153,7 +158,7 @@ public class VooTests {
 		rotas.addAll(Set.of(rotaVooAtoB, rotaVooBtoC, rotaVooCtoU));
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new Voo(rotas, this.companhia, 100);
+			new Voo(rotas, this.companhia, this.aeronave);
 		});
 		
 	    assertThat(exception.getMessage()).isEqualTo("rotas deve conter uma única perna final.");
@@ -170,7 +175,7 @@ public class VooTests {
 		rotas.add(rotaVooBtoC);
 		
 		Exception exception = assertThrows(IllegalArgumentException.class, () -> {
-			new Voo(rotas, this.companhia, 100);
+			new Voo(rotas, this.companhia, this.aeronave);
 		});
 		
 		assertThat(exception.getMessage()).isEqualTo("rotas deve conter uma única perna final.");

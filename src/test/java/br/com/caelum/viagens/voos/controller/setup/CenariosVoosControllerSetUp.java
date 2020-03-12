@@ -11,6 +11,9 @@ import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewParadaDaRotaInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
@@ -22,6 +25,7 @@ public class CenariosVoosControllerSetUp {
 	private CompanhiaRepository companhiaRepository;
 	private AeroportoRepository aeroportoRepository;
 	private RotaRepository rotaRepository;
+	private AeronaveRepository aeronaveRepository;
 	
 	private Pais argentina;
 	private Pais brasil;
@@ -30,6 +34,7 @@ public class CenariosVoosControllerSetUp {
 	private Pais uruguai;
 
 	private Companhia companhiaA;
+	private Aeronave aeronave;
 
 	private Aeroporto aeroportoA;
 	private Aeroporto aeroportoB;
@@ -46,11 +51,12 @@ public class CenariosVoosControllerSetUp {
 	private NewParadaDaRotaInputDto paradaValida;
 	
 	public CenariosVoosControllerSetUp(PaisRepository paisRepository, CompanhiaRepository companhiaRepository,
-			AeroportoRepository aeroportoRepository, RotaRepository rotaRepository) {
+			AeroportoRepository aeroportoRepository, RotaRepository rotaRepository, AeronaveRepository aeronaveReposiroty) {
 		this.paisRepository = paisRepository;
 		this.companhiaRepository = companhiaRepository;
 		this.aeroportoRepository = aeroportoRepository;
 		this.rotaRepository = rotaRepository;
+		this.aeronaveRepository = aeronaveReposiroty;
 		
 		this.paradaValida = new NewParadaDaRotaInputDto();
 		this.paradaValida.setTempo(40);
@@ -68,6 +74,7 @@ public class CenariosVoosControllerSetUp {
 		this.uruguai = this.paisRepository.save(new Pais("Uruguai"));
 		
 		this.companhiaA = this.companhiaRepository.save(new Companhia("CompanhiaA", this.argentina));
+		this.aeronave = this.aeronaveRepository.save(new Aeronave(Modelo.ATR40));
 		
 		this.aeroportoA = this.aeroportoRepository.save(new Aeroporto("AeroportoA", this.argentina));
 		this.aeroportoB = this.aeroportoRepository.save(new Aeroporto("AeroportoB", this.brasil));
@@ -92,7 +99,7 @@ public class CenariosVoosControllerSetUp {
 
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -112,7 +119,7 @@ public class CenariosVoosControllerSetUp {
 
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -128,13 +135,13 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(1L);
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
 	}
 	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComLugaresDisponiveisIgualAZero() {
+	public NewVooInputDto vooComRotaArgentinaParaBrasilComAeronveInexistente() {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		
@@ -143,22 +150,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(0);
-		newVooDto.setRotas(rotas);
-		
-		return newVooDto;
-	}
-	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComLugaresDisponiveisNegativo() {
-		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
-		rotaAtoB.setRotaId(this.rotaAtoB.getId());
-		
-		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
-		rotas.add(rotaAtoB);
-		
-		NewVooInputDto newVooDto = new NewVooInputDto();
-		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(-10);
+		newVooDto.setAeronaveId(1L);
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -167,7 +159,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooSemRotas() {
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		
 		return newVooDto;
 
@@ -190,7 +182,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -213,7 +205,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -237,7 +229,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -261,7 +253,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -276,7 +268,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -296,7 +288,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -312,7 +304,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -333,7 +325,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -352,7 +344,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -372,7 +364,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -397,7 +389,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -422,7 +414,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -447,7 +439,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -467,7 +459,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;

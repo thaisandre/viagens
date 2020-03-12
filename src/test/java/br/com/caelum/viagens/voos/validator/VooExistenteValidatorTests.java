@@ -16,6 +16,8 @@ import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
@@ -38,7 +40,9 @@ public class VooExistenteValidatorTests {
 		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(new RotaSemVoo(rota));
 		
-		Voo voo = new Voo(rotas , new Companhia("CompanhiaA", argentina), 90);
+		Aeronave aeronave = new Aeronave(Modelo.ATR40);
+		
+		Voo voo = new Voo(rotas , new Companhia("CompanhiaA", argentina), aeronave);
 				
 		when(this.vooRepository.findById(1L)).thenReturn(Optional.of(voo));
 		when(this.vooRepository.findById(20L)).thenReturn(Optional.empty());

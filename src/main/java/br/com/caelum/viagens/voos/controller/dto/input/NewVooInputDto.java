@@ -8,11 +8,12 @@ import java.util.stream.Collectors;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
 
@@ -25,9 +26,8 @@ public class NewVooInputDto {
 	@NotNull
 	private Long companhiaId;
 	
-	@Positive
 	@NotNull
-	private Integer lugaresDisponiveis;
+	private Long aeronaveId;
 
 	public void setRotas(Set<NewRotaDoVooInputDto> rotas) {
 		this.rotas = rotas;
@@ -37,8 +37,8 @@ public class NewVooInputDto {
 		this.companhiaId = companhiaId;
 	}
 
-	public void setLugaresDisponiveis(Integer lugaresDisponiveis) {
-		this.lugaresDisponiveis = lugaresDisponiveis;
+	public void setAeronaveId(Long aeronaveId) {
+		this.aeronaveId = aeronaveId;
 	}
 	
 	public Set<NewRotaDoVooInputDto> getRotas() {
@@ -49,17 +49,18 @@ public class NewVooInputDto {
 		return companhiaId;
 	}
 	
-	public Integer getLugaresDisponiveis() {
-		return lugaresDisponiveis;
+	public Long getAeronaveId() {
+		return aeronaveId;
 	}
 	
-	public Voo toModel(CompanhiaRepository companhiaRepository, RotaRepository rotaRepository) {
+	public Voo toModel(CompanhiaRepository companhiaRepository, RotaRepository rotaRepository, AeronaveRepository aeronaveRepository) {
 
 		Set<RotaSemVoo> rotasDoVoo = this.rotas.stream().map(r 
 				-> r.toModel(rotaRepository)).collect(Collectors.toSet());
 		
 		Optional<Companhia> companhia = companhiaRepository.findById(companhiaId);
-
-		return new Voo(rotasDoVoo, companhia.get(), this.lugaresDisponiveis);
+		Optional<Aeronave> aeronave = aeronaveRepository.findById(aeronaveId);
+		
+		return new Voo(rotasDoVoo, companhia.get(), aeronave.get());
 	}
 }

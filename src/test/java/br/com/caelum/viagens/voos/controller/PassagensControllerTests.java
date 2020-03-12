@@ -37,6 +37,9 @@ import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
@@ -61,6 +64,9 @@ public class PassagensControllerTests {
 
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
+	
+	@Autowired
+	private AeronaveRepository aeronaveRepository;
 	
 	@Autowired
 	private RotaRepository rotaRepository;
@@ -91,7 +97,10 @@ public class PassagensControllerTests {
 		Companhia companhiaA = new Companhia("CompanhiaA", argentina);
 		this.companhiaRepository.save(companhiaA);
 		
-		this.voo = new Voo(rotas , companhiaA, 90);
+		Aeronave aeronave = new Aeronave(Modelo.ATR40);
+		this.aeronaveRepository.save(aeronave);
+		
+		this.voo = new Voo(rotas , companhiaA, aeronave);
 		this.vooRepository.save(voo);
 		
 	}

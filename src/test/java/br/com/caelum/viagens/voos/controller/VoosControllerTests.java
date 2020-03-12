@@ -27,6 +27,7 @@ import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.setup.CenariosVoosControllerSetUp;
 import br.com.caelum.viagens.voos.model.Rota;
@@ -51,7 +52,10 @@ public class VoosControllerTests {
 
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
-
+	
+	@Autowired
+	private AeronaveRepository aeronaveRepository;
+	
 	@Autowired
 	private RotaRepository rotaRepository;
 
@@ -62,7 +66,7 @@ public class VoosControllerTests {
 		
 		this.cenarios = 
 				new CenariosVoosControllerSetUp(paisRepository, companhiaRepository, 
-						aeroportoRepository, rotaRepository);
+						aeroportoRepository, rotaRepository, aeronaveRepository);
 		
 	}
 
@@ -72,7 +76,7 @@ public class VoosControllerTests {
 		
 		RequestBuilder request = processaRequest(newVooDto);
 		
-		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository);
+		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository, aeronaveRepository);
 		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotasEmSequenciaLogica().iterator().next();
 		
 		mockMvc.perform(request).andExpect(status().isCreated())
@@ -98,7 +102,7 @@ public class VoosControllerTests {
 
 		RequestBuilder request = processaRequest(newVooDto);
 		
-		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository);
+		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository, aeronaveRepository);
 		List<Rota> rotas = voo.getRotasEmSequenciaLogica();
 				
 		br.com.caelum.viagens.voos.model.Rota rota1 = rotas.get(0);
@@ -146,31 +150,17 @@ public class VoosControllerTests {
 	}
 	
 	@Test
-	public void naoDeveSalvarNovoVooComLugaresDisponiveisIgualAZero() throws Exception {
+	public void naoDeveSalvarNovoVooComAeronaveQueNaoExiste() throws Exception {
 		NewVooInputDto newVooDto = 
-				cenarios.vooComRotaArgentinaParaBrasilComLugaresDisponiveisIgualAZero();
+				cenarios.vooComRotaArgentinaParaBrasilComAeronveInexistente();
 
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("lugaresDisponiveis"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
-	}
-	
-	@Test
-	public void naoDeveSalvarNovoVooComLugaresDisponiveisNegativo() throws Exception {
-		NewVooInputDto newVooDto = cenarios.
-				vooComRotaArgentinaParaBrasilComLugaresDisponiveisNegativo();
-
-		RequestBuilder request = processaRequest(newVooDto);
-		
-		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("lugaresDisponiveis"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("aeronaveId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("aeronave não existe no sistema."));		
 	}
 	
 	@Test

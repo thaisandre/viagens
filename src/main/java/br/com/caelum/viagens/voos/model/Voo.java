@@ -13,12 +13,12 @@ import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Positive;
 
 import org.springframework.util.Assert;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
 import br.com.caelum.viagens.voos.utils.GrafoRotasUtils;
 
 @Entity
@@ -35,41 +35,44 @@ public class Voo {
 	@NotNull
 	@ManyToOne
 	private Companhia companhia;
-
+	
 	@NotNull
-	@Positive
-	private Integer lugaresDisponiveis;
+	@ManyToOne
+	private Aeronave aeronave;
 
 	@Deprecated
 	public Voo() {
 	}
 
-	public Voo(@NotNull Set<RotaSemVoo> rotas, @NotNull Companhia companhia, @NotNull @Positive Integer lugaresDisponiveis) {
-		Assert.notNull(rotas, "A lista de rotas não pode ser nula");
-		Assert.notEmpty(rotas, "A lista de rotas não pode ser vazia");
+	public Voo(@NotNull Set<RotaSemVoo> rotas, @NotNull Companhia companhia, @NotNull Aeronave aeronave) {
+		Assert.notNull(rotas, "a lista de rotas não pode ser nula.");
+		Assert.notEmpty(rotas, "a lista de rotas não pode ser vazia.");
 		Assert.isTrue(GrafoRotasUtils.temSequenciaLogica(rotas),
 				"rotas devem possuir uma sequência lógica.");
-		Assert.notNull(companhia, "A companhia não pode ser nula");
-		Assert.notNull(lugaresDisponiveis, "O número de lugares disponíveis não pode ser nulo");
-		Assert.isTrue(lugaresDisponiveis > 0, () -> "O número de lugares disponíveis deve ser positivo.");
+		Assert.notNull(companhia, "a companhia não pode ser nula.");
+		Assert.notNull(aeronave, "a aeronave não pode ser nula.");
 
 		this.rotas = rotas.stream().map(r -> new Rota(r.getRota(), this, r.getParada())).collect(Collectors.toSet());
 		Assert.isTrue(temApenasUmaPernaFinal(), "rotas deve conter uma única perna final.");
 		
 		this.companhia = companhia;
-		this.lugaresDisponiveis = lugaresDisponiveis;
+		this.aeronave = aeronave;
 	}
 
 	public Long getId() {
 		return id;
 	}
+	
+	public Aeronave getAeronave() {
+		return aeronave;
+	}
 
 	public String getNomeCompanhia() {
 		return companhia.getNome();
 	}
-
+	
 	public Integer getLugaresDisponiveis() {
-		return lugaresDisponiveis;
+		return aeronave.getAssentos().size();
 	}
 
 	public String getNomeDaOrigem() {

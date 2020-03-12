@@ -20,10 +20,12 @@ import org.springframework.web.util.UriComponentsBuilder;
 
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.support.IfResourceIsFound;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.output.VooOutputDto;
 import br.com.caelum.viagens.voos.model.Voo;
+import br.com.caelum.viagens.voos.validator.AeronaveExistenteValidator;
 import br.com.caelum.viagens.voos.validator.CompanhiaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaExistenteValidator;
 import br.com.caelum.viagens.voos.validator.RotaRepetidaValidator;
@@ -43,11 +45,15 @@ public class VoosController {
 	
 	@Autowired
 	private FormFlow<Voo> flow;
+
+	@Autowired
+	private AeronaveRepository aeronaveRepository;
 	
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(
 				new CompanhiaExistenteValidator(this.companhiaRepository),
+				new AeronaveExistenteValidator(this.aeronaveRepository),
 				new RotaExistenteValidator(rotaRepository),
 				new RotaRepetidaValidator(rotaRepository),
 				new RotasComUmaUnicaPernaFinalValidator(),
