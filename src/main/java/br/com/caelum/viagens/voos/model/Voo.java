@@ -39,6 +39,9 @@ public class Voo {
 	@NotNull
 	@ManyToOne
 	private Aeronave aeronave;
+	
+	@OneToMany(mappedBy = "voo", cascade = CascadeType.ALL)
+	private Set<Passagem> passagens = new HashSet<>();
 
 	@Deprecated
 	public Voo() {
@@ -72,7 +75,7 @@ public class Voo {
 	}
 	
 	public Integer getLugaresDisponiveis() {
-		return aeronave.getAssentos().size();
+		return aeronave.getAssentos().size() - passagens.size();
 	}
 
 	public String getNomeDaOrigem() {
@@ -97,5 +100,10 @@ public class Voo {
 
 	private Aeroporto getOrigemInicial() {
 		return GrafoRotasUtils.getOrigemInicial(this.rotas);
+	}
+
+	public void addPassagem(@NotNull Passagem passagem) {
+		Assert.notNull(passagem, "passagem não pode ser nula");
+		this.passagens.add(passagem);
 	}
 }

@@ -11,6 +11,8 @@ import javax.validation.constraints.Positive;
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonFormat.Shape;
 
+import br.com.caelum.viagens.aeronaves.model.Assento;
+import br.com.caelum.viagens.aeronaves.repository.AssentoRepository;
 import br.com.caelum.viagens.voos.model.Passagem;
 import br.com.caelum.viagens.voos.model.Voo;
 import br.com.caelum.viagens.voos.repository.VooRepository;
@@ -21,7 +23,7 @@ public class NewPassagemInputDto {
 	@NotNull
 	private Long vooId;
 	
-	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy HH:mm:ss")
+	@JsonFormat(shape = Shape.STRING, pattern = "dd/MM/yyyy HH:mm")
 	@Future
 	@NotNull
 	private LocalDateTime dataEHoraDePartida;
@@ -30,6 +32,9 @@ public class NewPassagemInputDto {
 	@Positive
 	@NotNull
 	private BigDecimal valor;
+	
+	@NotNull
+	private Long assentoId;
 	
 	public Long getVooId() {
 		return vooId;
@@ -46,10 +51,19 @@ public class NewPassagemInputDto {
 	public void setValor(BigDecimal valor) {
 		this.valor = valor;
 	}
+	
+	public void setAssentoId(Long assentoId) {
+		this.assentoId = assentoId;
+	}
+	
+	public Long getAssentoId() {
+		return assentoId;
+	}
 
-	public Passagem toModel(VooRepository vooRepository) {
+	public Passagem toModel(VooRepository vooRepository, AssentoRepository assentoRepository) {
 		Optional<Voo> voo = vooRepository.findById(this.vooId);
-		return new Passagem(voo.get(), this.dataEHoraDePartida, this.valor);
+		Optional<Assento> assento = assentoRepository.findById(this.assentoId);
+		return new Passagem(voo.get(), this.dataEHoraDePartida, this.valor, assento.get());
 	}
 	
 }

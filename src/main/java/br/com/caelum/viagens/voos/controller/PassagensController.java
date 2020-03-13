@@ -18,11 +18,15 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.util.UriComponentsBuilder;
 
+import br.com.caelum.viagens.aeronaves.repository.AssentoRepository;
 import br.com.caelum.viagens.support.IfResourceIsFound;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.controller.dto.output.PassagemOutputDto;
 import br.com.caelum.viagens.voos.model.Passagem;
+import br.com.caelum.viagens.voos.repository.PassagemRepository;
 import br.com.caelum.viagens.voos.repository.VooRepository;
+import br.com.caelum.viagens.voos.validator.AssentoDisponivelValidator;
+import br.com.caelum.viagens.voos.validator.AssentoExistenteValidator;
 import br.com.caelum.viagens.voos.validator.VooExistenteValidator;
 import io.github.asouza.FormFlow;
 
@@ -35,10 +39,18 @@ public class PassagensController {
 	
 	@Autowired
 	private FormFlow<Passagem> flow;
+
+	@Autowired
+	private PassagemRepository passagemRepository;
+
+	@Autowired
+	private AssentoRepository assentoRepository;
 	
 	@InitBinder
 	public void initBinder(WebDataBinder webDataBinder) {
-		webDataBinder.addValidators(new VooExistenteValidator(vooRepository));
+		webDataBinder.addValidators(new VooExistenteValidator(vooRepository),
+				new AssentoExistenteValidator(assentoRepository),
+				new AssentoDisponivelValidator(passagemRepository));
 	}
 	
 	@PostMapping

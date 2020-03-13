@@ -104,7 +104,7 @@ public class VoosControllerTests {
 		
 		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository, aeronaveRepository);
 		List<Rota> rotas = voo.getRotasEmSequenciaLogica();
-				
+			
 		br.com.caelum.viagens.voos.model.Rota rota1 = rotas.get(0);
 		br.com.caelum.viagens.voos.model.Rota rota2 = rotas.get(1);
 		

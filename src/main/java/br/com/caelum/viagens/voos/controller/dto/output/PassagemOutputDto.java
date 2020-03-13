@@ -10,18 +10,20 @@ public class PassagemOutputDto {
 	public static Map<String, Object> criado(Passagem passagem) {
 		return DataView.of(passagem)
 				.add(Passagem::getId)
-				.add("voo", Passagem::getVoo)
-				.addDate("dataEHoraDePartida", p -> p.getDataEHoraDePartida(), "dd/MM/yyyy HH:mm:ss")
+				.add("assento", Passagem::getAssento)
+				.addDate("dataEHoraDePartida", p -> p.getDataEHoraDePartida(), "dd/MM/yyyy HH:mm")
 				.add("valor", Passagem::getValor)
+				.add("rotas",  p -> p.getVoo().getRotasEmSequenciaLogica())
 				.build();
 	}
 	
 	public static Map<String, Object> detalhes(Passagem passagem) {
 		return DataView.of(passagem)
 				.add(Passagem::getId)
-				.add("voo", Passagem::getVoo)
-				.addDate("dataEHoraDePartida", p -> p.getDataEHoraDePartida(), "dd/MM/yyyy HH:mm:ss")
+				.add("assento", Passagem::getAssento)
+				.addDate("dataEHoraDePartida", p -> p.getDataEHoraDePartida(), "dd/MM/yyyy HH:mm")
 				.add("valor", Passagem::getValor)
+				.add("rotas", p -> p.getVoo().getRotasEmSequenciaLogica())
 				.build();
 	}
 }
