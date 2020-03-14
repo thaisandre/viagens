@@ -27,7 +27,7 @@ public class AssentoDisponivelValidator implements Validator {
 		NewPassagemInputDto newPassagemDto = (NewPassagemInputDto) target;
 		
 		if(!errors.hasErrors()) {
-			Optional<Passagem> passagem = passagemRepository.findByAssentoId(newPassagemDto.getAssentoId());
+			Optional<Passagem> passagem = passagemRepository.findByVooIdAndAssentoId(newPassagemDto.getVooId(), newPassagemDto.getAssentoId());
 		
 			if(passagem.isPresent()) {
 				errors.rejectValue("assentoId", null, "assento não disponível.");

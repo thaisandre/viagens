@@ -36,6 +36,7 @@ import br.com.caelum.viagens.aeronaves.repository.AssentoRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.controller.setup.CenariosPassagensControllerSetup;
 import br.com.caelum.viagens.voos.model.Passagem;
+import br.com.caelum.viagens.voos.repository.PassagemRepository;
 import br.com.caelum.viagens.voos.repository.VooRepository;
 
 @SpringBootTest
@@ -69,14 +70,16 @@ public class PassagensControllerTests {
 	
 	@Autowired
 	private AssentoRepository assentoRepository;
+	
+	@Autowired
+	private PassagemRepository passagemRepository;
 
 	private CenariosPassagensControllerSetup cenarios;
 	
 	@BeforeEach
 	public void setUp() {
-		System.out.println("======" + this.aeroportoRepository);
 		this.cenarios = new CenariosPassagensControllerSetup(paisRepository, companhiaRepository, 
-				aeroportoRepository, rotaRepository, aeronaveRepository, vooRepository, assentoRepository);
+				aeroportoRepository, rotaRepository, aeronaveRepository, vooRepository, passagemRepository);
 		
 	}
 
@@ -105,11 +108,50 @@ public class PassagensControllerTests {
 			.andExpect(jsonPath("$.rotas[0].destino.pais.nome").value(rotas.get(0).getDestino().getPais().getNome()));
 	}
 	
+	@Test
+	public void naoDeveSalvarNovaPassagemComVooNulo() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComVooNulo();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("vooId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
+	}
 	
 	@Test
-	public void naoDeveSalvarNovaPassagemComNoPassado() throws Exception {
+	public void naoDeveSalvarNovaPassagemComVooQueNaoExiste() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComVooNaoExistente();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("vooId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("vooId não existe no sistema."));		
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaPassagemComDataEHoraNula() throws Exception {
 		NewPassagemInputDto newPassagemDto = 
-				cenarios.passagemComDataNoPassado();
+				cenarios.passagemComDataEHoraNula();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("dataEHoraDePartida"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaPassagemComDataEHoraNoPassado() throws Exception {
+		NewPassagemInputDto newPassagemDto = 
+				cenarios.passagemComDataEHoraNoPassado();
 
 		RequestBuilder request = processaRequest(newPassagemDto);
 		
@@ -121,16 +163,16 @@ public class PassagensControllerTests {
 	}
 	
 	@Test
-	public void naoDeveSalvarNovoVooSemListaDeRotas() throws Exception {	
-		NewPassagemInputDto newPassagemDto = cenarios.passagemComVooNaoExistente();
+	public void naoDeveSalvarNovaPassagemComValorNulo() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComValorNulo();
 
 		RequestBuilder request = processaRequest(newPassagemDto);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("vooId"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("vooId não existe no sistema."));		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("valor"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
 	}
 	
 	@Test
@@ -159,163 +201,57 @@ public class PassagensControllerTests {
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
 	}
 	
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComRotaComParadaComTempoIgualAZero() throws Exception {	
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParadaComTempoIgualAZeroERotaBrasilParaChile();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())		
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tempo"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComRotaComParadaComTempoNegativo() throws Exception {	
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParadaComTempoNegativoERotaBrasilParaChile();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())		
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tempo"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComRotaQueNaoExiste() throws Exception {	
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaInexistente();
-//		
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())		
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("rotaId 1 não existe no sistema."));		
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComRotasRepetidas() throws Exception {			
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotasDeArgentinaParaBrasilRepetidas();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())		
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não é permitido repetir rotas em um voo."));
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComUmaUnicaRotaQueNaoEhPernalFinal() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter pelo menos uma rota final (sem parada)."));
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComRotasQueNaoSaoPernalFinal() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParadaERotaBrasilParaChileComParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter pelo menos uma rota final (sem parada)."));
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooComMaisDeUmaRotaQueEhPernalFinal() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilSemParadaERotaBrasilParaChileSemParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("a lista de rotas precisa conter apenas uma única rota final (sem parada)."));
-//	}
-//	
-//	@Test
-//	public void naoDeveCadastrarVooComRotasComOrigemDeRotaAnteriorIgualAoDestinoDeRotaPosteriorConsecutiva() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParadaERotaBrasilParaArgentinaSemParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//		.andExpect(status().isBadRequest())
-//		.andExpect(jsonPath("$.fieldErrors").isArray())
-//		.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//		.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
-//		
-//	}
-//	
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooEmQueAOrigemDaRotaAnteriorSejaIgualAoDestinoDeUmaRotaPosteriorNaoConsecutiva() throws Exception {
-//		
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaBrasilParaArgentinaComParadaERotaBrasilParaChileComParadaERotaChileParaArgentinaSemParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooEmQueUmRotaNaoPossuiConexaoComAsOutrasDuas() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaArgentinaParaBrasilComParadaERotaBrasilParaChileComParadaERotaUruguaiParaParaguaiSemParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//		
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
-//	}
-//	
-//	@Test
-//	public void naoDeveSalvarNovoVooEmQueAsRotaPossuemRelacaoMasNaoUmaSequenciaLogica() throws Exception {
-//		NewVooInputDto newVooDto = 
-//				cenarios.vooComRotaBrasilParaArgentinaComParadaERotaBrasilParaChileComParadaERotaBrasilParaArgentinaSemParada();
-//
-//		RequestBuilder request = processaRequest(newVooDto);
-//
-//		mockMvc.perform(request)
-//			.andExpect(status().isBadRequest())
-//			.andExpect(jsonPath("$.fieldErrors").isArray())
-//			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas"))
-//			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
-//	}
+	@Test
+	public void naoDeveSalvarNovaPassagemComAssentoNulo() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComAssentoNulo();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("assentoId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));			
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaPassagemComAssentoNaoExistente() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComAssentoNaoExistente();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("assentoId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("assento não existe no sistema."));			
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaPassagemComAssentoNaoExistenteVoo() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComAssentoNaoExistenteNoVoo();
+
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("assentoId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("assento não existe no voo."));			
+	}
+	
+	@Test
+	public void naoDeveSalvarNovaPassagemComAssentoNaoDisponivel() throws Exception {	
+		NewPassagemInputDto newPassagemDto = cenarios.passagemComAssentoNaoDisponivel();
+		
+		RequestBuilder request = processaRequest(newPassagemDto);
+		
+		mockMvc.perform(request)
+		.andExpect(status().isBadRequest())
+		.andExpect(jsonPath("$.fieldErrors").isArray())		
+		.andExpect(jsonPath("$.fieldErrors[*].campo").value("assentoId"))
+		.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("assento não disponível."));			
+	}
 	
 	private MockHttpServletRequestBuilder processaRequest(NewPassagemInputDto newPassagemDto) throws JsonProcessingException {
 		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy HH:mm");
@@ -326,8 +262,4 @@ public class PassagensControllerTests {
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(objectMapper.writeValueAsString(newPassagemDto));
 	}
-	
-	
-	
-	
 }

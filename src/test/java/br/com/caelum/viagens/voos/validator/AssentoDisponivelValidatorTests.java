@@ -42,20 +42,27 @@ public class AssentoDisponivelValidatorTests {
 		Aeroporto aeroportoA = new Aeroporto("AeroportoA", argentina);
 		Aeroporto aeroportoB = new Aeroporto("AeroportoB", brasil);
 		
-		
-		Aeronave aeronave = new Aeronave(Modelo.ATR40);
-		Assento assento = new Assento(1, 'A', aeronave );
+		Companhia companhia = new Companhia("CompanhiaA", argentina);
 		
 		Rota rota = new Rota(aeroportoA, aeroportoB, 90);
 		RotaSemVoo rotaSemVoo = new RotaSemVoo(rota );
 		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(rotaSemVoo);
 		
-		Voo voo = new Voo(rotas, new Companhia("CompanhiaA", new Pais("Argentina")), aeronave);
+		Aeronave aeronave = new Aeronave(Modelo.ATR40);
+		Assento assento = aeronave.getAssentos().stream().findFirst().get();
+		
+		Voo voo = new Voo(rotas, companhia, aeronave);
 		Passagem passagem = new Passagem(voo, LocalDateTime.now().plusDays(2), new BigDecimal(500.0), assento);
 		
-		when(this.passagemRepository.findByAssentoId(1L)).thenReturn(Optional.of(passagem));
-		when(this.passagemRepository.findByAssentoId(20L)).thenReturn(Optional.empty());
+		Aeronave aeronave2 = new Aeronave(Modelo.ATR40);
+		Assento assento2 =  aeronave2.getAssentos().stream().findFirst().get();
+		
+		Voo voo2 = new Voo(rotas, companhia, aeronave2);
+		Passagem passagem2 = new Passagem(voo2, LocalDateTime.now().plusDays(2), new BigDecimal(500.0), assento2);
+		
+		when(this.passagemRepository.findByVooIdAndAssentoId(1L, 1L)).thenReturn(Optional.of(passagem));
+		when(this.passagemRepository.findByVooIdAndAssentoId(2L, 2L)).thenReturn(Optional.of(passagem2));
 		
 		this.validator = new AssentoDisponivelValidator(passagemRepository);
 	}
@@ -63,7 +70,8 @@ public class AssentoDisponivelValidatorTests {
 	@Test
 	public void naoDeveDetectarErroQuandoCadastrarPassagemComAssentoDisponivel() {
 		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
-		newPassagemDto.setAssentoId(20L);
+		newPassagemDto.setVooId(1L);
+		newPassagemDto.setAssentoId(2L);
 		
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagemDto");
 		validator.validate(newPassagemDto, result);
@@ -74,6 +82,7 @@ public class AssentoDisponivelValidatorTests {
 	@Test
 	public void deveDetectarErroQuandoCadastrarPassagemComAssentoIndisponivel() {
 		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
+		newPassagemDto.setVooId(1L);
 		newPassagemDto.setAssentoId(1L);
 		
 		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagemDto");

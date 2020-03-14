@@ -4,8 +4,8 @@ import java.math.BigDecimal;
 import java.math.RoundingMode;
 import java.time.LocalDateTime;
 import java.util.HashSet;
-import java.util.Optional;
 import java.util.Set;
+import java.util.stream.Collectors;
 
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
@@ -19,10 +19,11 @@ import br.com.caelum.viagens.aeronaves.model.Aeronave;
 import br.com.caelum.viagens.aeronaves.model.Assento;
 import br.com.caelum.viagens.aeronaves.model.Modelo;
 import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
-import br.com.caelum.viagens.aeronaves.repository.AssentoRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
+import br.com.caelum.viagens.voos.model.Passagem;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
+import br.com.caelum.viagens.voos.repository.PassagemRepository;
 import br.com.caelum.viagens.voos.repository.VooRepository;
 
 public class CenariosPassagensControllerSetup {
@@ -33,7 +34,7 @@ public class CenariosPassagensControllerSetup {
 	private AeronaveRepository aeronaveRepository;
 	private RotaRepository rotaRepository;
 	private VooRepository vooRepository;
-	private AssentoRepository assentoRepository;
+	private PassagemRepository passagemRepository;
 	
 	private Pais argentina;
 	private Pais brasil;
@@ -42,16 +43,19 @@ public class CenariosPassagensControllerSetup {
 	private Aeroporto aeroportoB;
 
 	private Companhia companhiaA;
-	private Aeronave aeronave;
+	
+	private Aeronave aeronave1;
+	private Aeronave aeronave2;
 	
 	private Voo voo;
 
-	private Assento assento;
-	private Assento assentoDisponivel;
+	private Assento assento1;
+	private Assento assento2;
+	private Assento assento3;
 	
 	public CenariosPassagensControllerSetup(PaisRepository paisRepository, CompanhiaRepository companhiaRepository,
 			AeroportoRepository aeroportoRepository, RotaRepository rotaRepository, AeronaveRepository aeronaveRepository,
-			VooRepository vooRepository, AssentoRepository assentoRepository) {
+			VooRepository vooRepository, PassagemRepository passagemRepository) {
 		
 		this.paisRepository = paisRepository;
 		this.companhiaRepository = companhiaRepository;
@@ -59,7 +63,7 @@ public class CenariosPassagensControllerSetup {
 		this.rotaRepository = rotaRepository;
 		this.aeronaveRepository = aeronaveRepository;
 		this.vooRepository = vooRepository;
-		this.assentoRepository = assentoRepository;
+		this.passagemRepository = passagemRepository;
 		
 		populaBanco();
 		
@@ -77,10 +81,19 @@ public class CenariosPassagensControllerSetup {
 		rotas.add(new RotaSemVoo(rota));
 		
 		this.companhiaA = this.companhiaRepository.save( new Companhia("CompanhiaA", argentina));
-		this.aeronave =  this.aeronaveRepository.save(new Aeronave(Modelo.ATR40));
-		this.voo = this.vooRepository.save(new Voo(rotas , companhiaA, aeronave));
 		
-		this.assento =  voo.getAeronave().getAssentos().stream().findFirst().get();
+		this.aeronave1 =  this.aeronaveRepository.save(new Aeronave(Modelo.ATR40));
+		this.aeronave2 =  this.aeronaveRepository.save(new Aeronave(Modelo.ATR72));
+		
+		this.voo = this.vooRepository.save(new Voo(rotas , companhiaA, aeronave1));
+		
+		this.assento1 =  voo.getAeronave().getAssentos().stream().findFirst().get();
+		this.assento2 = voo.getAeronave().getAssentos().stream().filter(a -> !a.equals(assento1))
+				.collect(Collectors.toList()).get(0);
+		
+		this.assento3 =  this.aeronave2.getAssentos().stream().findFirst().get();
+		
+		this.passagemRepository.save(new Passagem(voo, LocalDateTime.now().plusDays(2), new BigDecimal(500.0), assento2));
 	}
 	
 	public NewPassagemInputDto passagemValida() {
@@ -91,22 +104,20 @@ public class CenariosPassagensControllerSetup {
 		passagemInputDto.setDataEHoraDePartida(dataEHora);
 		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
 		
-		Optional<Assento> assento = voo.getAeronave().getAssentos().stream().findFirst();
-		passagemInputDto.setAssentoId(assento.get().getId());
+		passagemInputDto.setAssentoId(assento1.getId());
 		
 		return passagemInputDto;
 	}
 	
-
-	public NewPassagemInputDto passagemComDataNoPassado() {
+	public NewPassagemInputDto passagemComVooNulo() {
 		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
-		passagemInputDto.setVooId(this.voo.getId());
 		
-		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().minusDays(2);
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
 		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
 		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
 		
-		passagemInputDto.setAssentoId(this.assento.getId());
+		passagemInputDto.setAssentoId(this.assento1.getId());
 	    
 		return passagemInputDto;
 	}
@@ -117,9 +128,45 @@ public class CenariosPassagensControllerSetup {
 		
 		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
 		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
 		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
 		
-		passagemInputDto.setAssentoId(this.assento.getId());
+		passagemInputDto.setAssentoId(this.assento1.getId());
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComDataEHoraNula() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		passagemInputDto.setAssentoId(this.assento1.getId());
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComDataEHoraNoPassado() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().minusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		
+		passagemInputDto.setAssentoId(this.assento1.getId());
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComValorNulo() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setAssentoId(this.assento1.getId());
 	    
 		return passagemInputDto;
 	}
@@ -130,9 +177,10 @@ public class CenariosPassagensControllerSetup {
 		
 		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
 		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
 		passagemInputDto.setValor(BigDecimal.valueOf(-900.0).setScale(2, RoundingMode.HALF_UP));
 		
-		passagemInputDto.setAssentoId(this.assento.getId());
+		passagemInputDto.setAssentoId(this.assento1.getId());
 	    
 		return passagemInputDto;
 	}
@@ -143,9 +191,64 @@ public class CenariosPassagensControllerSetup {
 		
 		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
 		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
 		passagemInputDto.setValor(BigDecimal.valueOf(0.0).setScale(2, RoundingMode.HALF_UP));
 		
-		passagemInputDto.setAssentoId(this.assento.getId());
+		passagemInputDto.setAssentoId(this.assento1.getId());
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComAssentoNulo() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComAssentoNaoExistente() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		
+		passagemInputDto.setAssentoId(1L);
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComAssentoNaoExistenteNoVoo() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		
+		passagemInputDto.setAssentoId(this.assento3.getId());
+	    
+		return passagemInputDto;
+	}
+	
+	public NewPassagemInputDto passagemComAssentoNaoDisponivel() {
+		NewPassagemInputDto passagemInputDto = new NewPassagemInputDto();
+		passagemInputDto.setVooId(this.voo.getId());
+		
+		LocalDateTime dataEHoraNoPassado = LocalDateTime.now().plusDays(2);
+		passagemInputDto.setDataEHoraDePartida(dataEHoraNoPassado);
+		
+		passagemInputDto.setValor(BigDecimal.valueOf(900.0).setScale(2, RoundingMode.HALF_UP));
+		
+		passagemInputDto.setAssentoId(this.assento2.getId());
 	    
 		return passagemInputDto;
 	}

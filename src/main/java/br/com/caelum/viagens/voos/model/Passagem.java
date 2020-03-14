@@ -55,6 +55,7 @@ public class Passagem {
 		this.voo = voo;
 		this.dataEHoraDePartida = dataEHoraDePartida;
 		this.valor = valor;
+		Assert.isTrue(voo.contem(assento), "assento não pertence ao voo.");
 		this.assento = assento;
 	}
 	
@@ -77,5 +78,4 @@ public class Passagem {
 	public Assento getAssento() {
 		return assento;
 	}
-	
 }

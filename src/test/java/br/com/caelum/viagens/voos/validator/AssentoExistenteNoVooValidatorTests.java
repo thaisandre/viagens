@@ -17,18 +17,20 @@ import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.administrativo.model.Pais;
 import br.com.caelum.viagens.administrativo.model.Rota;
 import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Assento;
 import br.com.caelum.viagens.aeronaves.model.Modelo;
 import br.com.caelum.viagens.voos.controller.dto.input.NewPassagemInputDto;
 import br.com.caelum.viagens.voos.model.RotaSemVoo;
 import br.com.caelum.viagens.voos.model.Voo;
 import br.com.caelum.viagens.voos.repository.VooRepository;
 
-public class VooExistenteValidatorTests {
+public class AssentoExistenteNoVooValidatorTests {
 	
-	private VooExistenteValidator validator;
+	private AssentoExistenteNoVooValidator validator;
 	private VooRepository vooRepository;
 	
-
+	private Assento assento;
+	
 	@BeforeEach
 	public void setUp() {
 		this.vooRepository = Mockito.mock(VooRepository.class);
@@ -40,38 +42,42 @@ public class VooExistenteValidatorTests {
 		Set<RotaSemVoo> rotas = new HashSet<>();
 		rotas.add(new RotaSemVoo(rota));
 		
+		Companhia companhia = new Companhia("CompanhiaA", argentina);
+		
 		Aeronave aeronave = new Aeronave(Modelo.ATR40);
+		this.assento = aeronave.getAssentos().stream().findFirst().get();
 		
-		Voo voo = new Voo(rotas , new Companhia("CompanhiaA", argentina), aeronave);
-				
+		Voo voo = new Voo(rotas, companhia, aeronave);
+		
 		when(this.vooRepository.findById(1L)).thenReturn(Optional.of(voo));
-		when(this.vooRepository.findById(20L)).thenReturn(Optional.empty());
 		
-		this.validator = new VooExistenteValidator(vooRepository);
+		this.validator = new AssentoExistenteNoVooValidator(vooRepository);
 	}
 	
 	@Test
-	public void deveDetectarErroQuandoCadastrarPassagemComVooQueNaoExiste() {
-		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
-		newPassagemDto.setVooId(20L);
-		
-		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagenDto");
-		validator.validate(newPassagemDto, result);
-		
-		assertThat(result.getFieldErrors()).isNotEmpty();
-		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("vooId");
-		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
-			.isEqualTo("vooId não existe no sistema.");
-	}
-	
-	@Test
-	public void naoDeveDetectarErroQuandoCadastrarPassagemComVooQueExiste() {
+	public void naoDeveDetectarErroQuandoCadastrarPassagemComAssentoExistenteNoVoo() {
 		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
 		newPassagemDto.setVooId(1L);
+		newPassagemDto.setAssentoId(this.assento.getId());
 		
-		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagenDto");
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagemDto");
 		validator.validate(newPassagemDto, result);
 		
 		assertThat(result.getFieldErrors()).isEmpty();
 	}
-}
+	
+	@Test
+	public void deveDetectarErroQuandoCadastrarPassagemComAssentoQueNaoExisteNoVoo() {
+		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
+		newPassagemDto.setVooId(1L);
+		newPassagemDto.setAssentoId(20L);
+		
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagemDto");
+		validator.validate(newPassagemDto, result);
+		
+		assertThat(result.getFieldErrors()).isNotEmpty();
+		assertThat(result.getFieldErrors().get(0).getField()).isEqualTo("assentoId");
+		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
+			.isEqualTo("assento não existe no voo.");
+	}
+}	

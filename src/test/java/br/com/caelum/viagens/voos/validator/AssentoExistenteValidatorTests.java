@@ -27,7 +27,7 @@ public class AssentoExistenteValidatorTests {
 		
 		Aeronave aeronave = new Aeronave(Modelo.ATR40);
 		Assento assento = new Assento(1, 'A', aeronave);
-		
+
 		when(this.assentoRepository.findById(1L)).thenReturn(Optional.of(assento));
 		when(this.assentoRepository.findById(20L)).thenReturn(Optional.empty());
 		
@@ -35,18 +35,18 @@ public class AssentoExistenteValidatorTests {
 	}
 	
 	@Test
-	public void naoDeveDetectarErroQuandoCadastrarPassagemComAssentoDisponivel() {
+	public void naoDeveDetectarErroQuandoCadastrarPassagemComAssentoExistente() {
 		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
 		newPassagemDto.setAssentoId(1L);
 		
-		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newVooDto");
+		BeanPropertyBindingResult result = new BeanPropertyBindingResult(newPassagemDto, "newPassagemDto");
 		validator.validate(newPassagemDto, result);
 		
 		assertThat(result.getFieldErrors()).isEmpty();
 	}
 	
 	@Test
-	public void deveDetectarErroQuandoCadastrarPassagemComAssentoIndisponivel() {
+	public void deveDetectarErroQuandoCadastrarPassagemComAssentoQueNaoExisteNoSistema() {
 		NewPassagemInputDto newPassagemDto = new NewPassagemInputDto();
 		newPassagemDto.setAssentoId(20L);
 		
@@ -58,4 +58,5 @@ public class AssentoExistenteValidatorTests {
 		assertThat(result.getFieldErrors().get(0).getDefaultMessage())
 			.isEqualTo("assento não existe no sistema.");
 	}
+	
 }

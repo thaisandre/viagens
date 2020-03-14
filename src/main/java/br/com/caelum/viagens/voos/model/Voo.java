@@ -19,6 +19,7 @@ import org.springframework.util.Assert;
 import br.com.caelum.viagens.administrativo.model.Aeroporto;
 import br.com.caelum.viagens.administrativo.model.Companhia;
 import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Assento;
 import br.com.caelum.viagens.voos.utils.GrafoRotasUtils;
 
 @Entity
@@ -93,6 +94,10 @@ public class Voo {
 	private boolean temApenasUmaPernaFinal() {
 		return this.rotas.stream().filter(r -> r.isPernaFinal()).count() == 1;
 	}
+	
+	public boolean contem(Assento assento) {
+		return this.aeronave.getAssentos().contains(assento);
+	}
 
 	private Aeroporto getDestinoFinal() {
 		return GrafoRotasUtils.getDestinoFinal(this.rotas);
@@ -100,10 +105,5 @@ public class Voo {
 
 	private Aeroporto getOrigemInicial() {
 		return GrafoRotasUtils.getOrigemInicial(this.rotas);
-	}
-
-	public void addPassagem(@NotNull Passagem passagem) {
-		Assert.notNull(passagem, "passagem não pode ser nula");
-		this.passagens.add(passagem);
 	}
 }

@@ -28,12 +28,10 @@ public class AssentoExistenteValidator implements Validator{
 		
 		if(!errors.hasErrors()) {
 			Optional<Assento> assentoBuscado = assentoRepository.findById(newPassagemDto.getAssentoId());
-		
+			
 			if(!assentoBuscado.isPresent()) {
 				errors.rejectValue("assentoId", null, "assento não existe no sistema.");
-			}
+			} 
 		}
-		
 	}
-
 }

@@ -26,6 +26,7 @@ import br.com.caelum.viagens.voos.model.Passagem;
 import br.com.caelum.viagens.voos.repository.PassagemRepository;
 import br.com.caelum.viagens.voos.repository.VooRepository;
 import br.com.caelum.viagens.voos.validator.AssentoDisponivelValidator;
+import br.com.caelum.viagens.voos.validator.AssentoExistenteNoVooValidator;
 import br.com.caelum.viagens.voos.validator.AssentoExistenteValidator;
 import br.com.caelum.viagens.voos.validator.VooExistenteValidator;
 import io.github.asouza.FormFlow;
@@ -50,6 +51,7 @@ public class PassagensController {
 	public void initBinder(WebDataBinder webDataBinder) {
 		webDataBinder.addValidators(new VooExistenteValidator(vooRepository),
 				new AssentoExistenteValidator(assentoRepository),
+				new AssentoExistenteNoVooValidator(vooRepository),
 				new AssentoDisponivelValidator(passagemRepository));
 	}
 	
@@ -67,5 +69,4 @@ public class PassagensController {
 	public ResponseEntity<Map<String, Object>> detalhes(@PathVariable("id") Optional<Passagem> passagem){
 		return ResponseEntity.ok(PassagemOutputDto.detalhes(IfResourceIsFound.of(passagem)));
 	}
-
 }
