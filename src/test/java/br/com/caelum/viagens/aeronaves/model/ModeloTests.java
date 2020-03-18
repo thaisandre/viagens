@@ -1,4 +1,4 @@
-package br.com.caelum.viagens.aeronaves.utils;
+package br.com.caelum.viagens.aeronaves.model;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.assertTrue;
@@ -10,17 +10,13 @@ import java.util.stream.IntStream;
 
 import org.junit.jupiter.api.Test;
 
-import br.com.caelum.viagens.aeronaves.model.Aeronave;
-import br.com.caelum.viagens.aeronaves.model.Assento;
-import br.com.caelum.viagens.aeronaves.model.Modelo;
-
-public class AssentosUtilsTests {
+public class ModeloTests {
 	
 	@Test
 	public void deveGerarAcentosDoModeloEspecificoDeAeronave() {
 		
 		Aeronave aeronave = new Aeronave(Modelo.ATR40);
-		Set<Assento> assentos = AssentosUtils.geraAssentos(aeronave);
+		Set<Assento> assentos = aeronave.getModelo().geraAssentos(aeronave);
 		
 		List<Integer> numeros= IntStream.rangeClosed(1, 12).boxed().collect(Collectors.toList());
 		List<Character> letras = List.of('A', 'B', 'C', 'D');

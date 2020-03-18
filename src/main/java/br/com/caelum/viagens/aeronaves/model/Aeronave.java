@@ -1,6 +1,7 @@
 package br.com.caelum.viagens.aeronaves.model;
 
 import java.util.Set;
+import java.util.SortedSet;
 import java.util.TreeSet;
 
 import javax.persistence.CascadeType;
@@ -11,12 +12,11 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
-
-import br.com.caelum.viagens.aeronaves.utils.AssentosUtils;
 
 @Entity
 public class Aeronave {
@@ -30,8 +30,9 @@ public class Aeronave {
 	private Modelo modelo;
 	
 	@NotEmpty
+	@OrderBy
 	@OneToMany(mappedBy = "aeronave", cascade = CascadeType.ALL)
-	private Set<Assento> assentos = new TreeSet<>();
+	private SortedSet<Assento> assentos = new TreeSet<>();
 	
 	@Deprecated
 	public Aeronave() {}
@@ -39,7 +40,7 @@ public class Aeronave {
 	public Aeronave(@NotNull Modelo modelo) {
 		Assert.notNull(modelo, "modelo não pode ser nulo.");
 		this.modelo = modelo;
-		this.assentos = AssentosUtils.geraAssentos(this);
+		this.assentos = modelo.geraAssentos(this);
 	}
 	
 	public Long getId() {

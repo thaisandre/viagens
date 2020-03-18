@@ -91,14 +91,18 @@ public class Voo {
 		return GrafoRotasUtils.getRotasEmSequenciaLogica(rotas);
 	}
 	
+	public boolean contem(Assento assento) {
+		return this.aeronave.getAssentos().contains(assento);
+	}
+	
+	public Set<Passagem> getPassagens() {
+		return passagens;
+	}
+
 	private boolean temApenasUmaPernaFinal() {
 		return this.rotas.stream().filter(r -> r.isPernaFinal()).count() == 1;
 	}
 	
-	public boolean contem(Assento assento) {
-		return this.aeronave.getAssentos().contains(assento);
-	}
-
 	private Aeroporto getDestinoFinal() {
 		return GrafoRotasUtils.getDestinoFinal(this.rotas);
 	}

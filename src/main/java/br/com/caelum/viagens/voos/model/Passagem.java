@@ -49,12 +49,10 @@ public class Passagem {
 		Assert.notNull(voo, "voo não pode ser nulo.");
 		Assert.notNull(dataEHoraDePartida, "dataEHoraDePartida não pode ser nula.");
 		Assert.isTrue(dataEHoraDePartida.isAfter(LocalDateTime.now()), "dataEHoraDePartida deve ser no futuro.");
-		Assert.notNull(valor, "valor não pode ser nulo.");
-		Assert.isTrue(valor.compareTo(BigDecimal.ZERO) > 0, "valor deve ser positivo.");
 		Assert.notNull(assento, "assento não pode ser nulo.");
 		this.voo = voo;
 		this.dataEHoraDePartida = dataEHoraDePartida;
-		this.valor = valor;
+		this.setValor(valor);
 		Assert.isTrue(voo.contem(assento), "assento não pertence ao voo.");
 		this.assento = assento;
 	}
@@ -77,5 +75,11 @@ public class Passagem {
 	
 	public Assento getAssento() {
 		return assento;
+	}
+	
+	public void setValor(BigDecimal valor) {
+		Assert.notNull(valor, "valor não pode ser nulo.");
+		Assert.isTrue(valor.compareTo(BigDecimal.ZERO) > 0, "valor deve ser positivo.");
+		this.valor = valor;
 	}
 }

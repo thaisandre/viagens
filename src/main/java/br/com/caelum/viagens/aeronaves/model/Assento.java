@@ -11,7 +11,7 @@ import javax.validation.constraints.Positive;
 import org.springframework.util.Assert;
 
 @Entity
-public class Assento {
+public class Assento implements Comparable<Assento>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -57,5 +57,10 @@ public class Assento {
 	@Override
 	public String toString() {
 		return fileira+posicao.toString();
+	}
+
+	@Override
+	public int compareTo(Assento outorAssento) {
+		return this.toString().compareTo(outorAssento.toString());
 	}
 }
