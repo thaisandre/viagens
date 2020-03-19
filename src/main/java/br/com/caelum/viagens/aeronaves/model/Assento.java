@@ -60,7 +60,11 @@ public class Assento implements Comparable<Assento>{
 	}
 
 	@Override
-	public int compareTo(Assento outorAssento) {
-		return this.toString().compareTo(outorAssento.toString());
+	public int compareTo(Assento outroAssento) {
+		Integer comparator =  this.fileira.compareTo(outroAssento.fileira);
+		if(comparator == 0) {
+			return this.posicao.compareTo(outroAssento.posicao);
+		}
+		return comparator;
 	}
 }

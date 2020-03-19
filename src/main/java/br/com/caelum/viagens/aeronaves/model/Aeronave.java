@@ -1,6 +1,5 @@
 package br.com.caelum.viagens.aeronaves.model;
 
-import java.util.Set;
 import java.util.SortedSet;
 import java.util.TreeSet;
 
@@ -30,7 +29,7 @@ public class Aeronave {
 	private Modelo modelo;
 	
 	@NotEmpty
-	@OrderBy
+	@OrderBy("fileira, posicao")
 	@OneToMany(mappedBy = "aeronave", cascade = CascadeType.ALL)
 	private SortedSet<Assento> assentos = new TreeSet<>();
 	
@@ -51,7 +50,7 @@ public class Aeronave {
 		return modelo;
 	}
 	
-	public Set<Assento> getAssentos() {
+	public SortedSet<Assento> getAssentos() {
 		return assentos;
 	}
 }

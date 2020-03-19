@@ -19,7 +19,7 @@ import br.com.caelum.viagens.aeronaves.model.Assento;
 
 
 @Entity
-public class Passagem {
+public class Passagem implements Comparable<Passagem>{
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -81,5 +81,10 @@ public class Passagem {
 		Assert.notNull(valor, "valor não pode ser nulo.");
 		Assert.isTrue(valor.compareTo(BigDecimal.ZERO) > 0, "valor deve ser positivo.");
 		this.valor = valor;
+	}
+
+	@Override
+	public int compareTo(Passagem outraPassagem) {
+		return this.getAssento().compareTo(outraPassagem.getAssento());
 	}
 }

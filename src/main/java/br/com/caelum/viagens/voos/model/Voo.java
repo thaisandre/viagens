@@ -3,6 +3,8 @@ package br.com.caelum.viagens.voos.model;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+import java.util.SortedSet;
+import java.util.TreeSet;
 import java.util.stream.Collectors;
 
 import javax.persistence.CascadeType;
@@ -12,6 +14,7 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.ManyToOne;
 import javax.persistence.OneToMany;
+import javax.persistence.OrderBy;
 import javax.validation.constraints.NotNull;
 
 import org.springframework.util.Assert;
@@ -41,8 +44,9 @@ public class Voo {
 	@ManyToOne
 	private Aeronave aeronave;
 	
+	@OrderBy("assento")
 	@OneToMany(mappedBy = "voo", cascade = CascadeType.ALL)
-	private Set<Passagem> passagens = new HashSet<>();
+	private SortedSet<Passagem> passagens = new TreeSet<>();
 
 	@Deprecated
 	public Voo() {
@@ -95,7 +99,7 @@ public class Voo {
 		return this.aeronave.getAssentos().contains(assento);
 	}
 	
-	public Set<Passagem> getPassagens() {
+	public SortedSet<Passagem> getPassagens() {
 		return passagens;
 	}
 
