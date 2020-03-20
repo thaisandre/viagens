@@ -39,7 +39,7 @@ public class NewPassagensInputDto {
 
 	public Voo toModel(Voo voo) {		
 		voo.getAeronave().getAssentos().forEach(assento -> {
-			voo.getPassagens().add(new Passagem(voo, this.dataEHoraDePartida, this.valor, assento));
+			voo.getPassagens().add(new Passagem(voo, this.dataEHoraDePartida, this.valor));
 		});
 		return voo;
 	}

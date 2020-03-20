@@ -19,7 +19,7 @@ import br.com.caelum.viagens.aeronaves.model.Assento;
 
 
 @Entity
-public class Passagem implements Comparable<Passagem>{
+public class Passagem {
 	
 	@Id
 	@GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -37,7 +37,6 @@ public class Passagem implements Comparable<Passagem>{
 	@NotNull
 	private BigDecimal valor;
 	
-	@NotNull
 	@OneToOne
 	private Assento assento;
 	
@@ -45,16 +44,13 @@ public class Passagem implements Comparable<Passagem>{
 	public Passagem() {}
 
 	public Passagem(@NotNull Voo voo, @Future @NotNull LocalDateTime dataEHoraDePartida,
-			@Positive @NotNull BigDecimal valor, @NotNull Assento assento) {
+			@Positive @NotNull BigDecimal valor) {
 		Assert.notNull(voo, "voo não pode ser nulo.");
 		Assert.notNull(dataEHoraDePartida, "dataEHoraDePartida não pode ser nula.");
 		Assert.isTrue(dataEHoraDePartida.isAfter(LocalDateTime.now()), "dataEHoraDePartida deve ser no futuro.");
-		Assert.notNull(assento, "assento não pode ser nulo.");
 		this.voo = voo;
 		this.dataEHoraDePartida = dataEHoraDePartida;
-		this.setValor(valor);
-		Assert.isTrue(voo.contem(assento), "assento não pertence ao voo.");
-		this.assento = assento;
+		this.valor = valor;
 	}
 	
 	public Long getId() {
@@ -71,20 +67,5 @@ public class Passagem implements Comparable<Passagem>{
 	
 	public BigDecimal getValor() {
 		return valor;
-	}
-	
-	public Assento getAssento() {
-		return assento;
-	}
-	
-	public void setValor(BigDecimal valor) {
-		Assert.notNull(valor, "valor não pode ser nulo.");
-		Assert.isTrue(valor.compareTo(BigDecimal.ZERO) > 0, "valor deve ser positivo.");
-		this.valor = valor;
-	}
-
-	@Override
-	public int compareTo(Passagem outraPassagem) {
-		return this.getAssento().compareTo(outraPassagem.getAssento());
 	}
 }
