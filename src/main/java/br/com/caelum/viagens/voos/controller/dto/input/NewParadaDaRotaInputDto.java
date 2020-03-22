@@ -5,19 +5,17 @@ import javax.validation.constraints.Positive;
 
 import br.com.caelum.viagens.voos.model.Parada;
 import br.com.caelum.viagens.voos.model.TipoParada;
-import br.com.caelum.viagens.voos.validator.annotations.TipoParadaExistente;
 
 public class NewParadaDaRotaInputDto {
-	
-	@TipoParadaExistente
+
 	@NotNull
-	private String tipo;
+	private TipoParada tipo;
 
 	@NotNull
 	@Positive
 	private Integer tempo;
 
-	public void setTipo(String tipo) {
+	public void setTipo(TipoParada tipo) {
 		this.tipo = tipo;
 	}
 
@@ -25,16 +23,17 @@ public class NewParadaDaRotaInputDto {
 		this.tempo = tempo;
 	}
 
-	public String getTipo() {
-		return this.tipo;
-	}
 	
+	public TipoParada getTipo() { 
+		return this.tipo; 
+	}
+
 	public Integer getTempo() {
 		return tempo;
 	}
-	
+
 	public Parada ToModel() {
-		return new Parada(tempo, TipoParada.valueOf(tipo));
+		return new Parada(tempo, tipo);
 	}
 
 }

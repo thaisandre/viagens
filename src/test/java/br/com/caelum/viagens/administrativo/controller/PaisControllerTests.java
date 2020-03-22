@@ -41,10 +41,11 @@ public class PaisControllerTests {
 	@Autowired
 	private PaisRepository paisRepository;
 	
+	private Pais brasil;
+	
 	@BeforeEach
 	public void setUp() {
-		this.paisRepository.save(new Pais("Argentina"));
-		this.paisRepository.save(new Pais("Brasil"));
+		brasil = this.paisRepository.save(new Pais("Brasil"));
 	}
 	
 	@Test
@@ -97,20 +98,22 @@ public class PaisControllerTests {
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("Pais já existe no sistema."));
 	}
 	
+	@Test
 	public void deveRetornarDetalhesDeUmPaisQueExiste() throws Exception {
-		URI uri = new UriTemplate(ENDPOINT).expand("1");
+		URI uri = new UriTemplate(ENDPOINT+"/{id}").expand(this.brasil.getId());
 		 
 		RequestBuilder request = get(uri)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isOk())
-			.andExpect(jsonPath("$.id").value(1))
+			.andExpect(jsonPath("$.id").value(this.brasil.getId()))
 			.andExpect(jsonPath("$.nome").value("Brasil"));
 	}
 	
+	@Test
 	public void deveRetornarStatus404SeIdDoPaisNaoExistir() throws Exception {
-		URI uri = new UriTemplate(ENDPOINT).expand("5");
+		URI uri = new UriTemplate(ENDPOINT+"/{id}").expand("5");
 		 
 		RequestBuilder request = get(uri)
 				.contentType(MediaType.APPLICATION_JSON_VALUE);

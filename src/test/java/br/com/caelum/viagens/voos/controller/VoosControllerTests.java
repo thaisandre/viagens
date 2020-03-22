@@ -1,9 +1,14 @@
 package br.com.caelum.viagens.voos.controller;
 
+import static org.hamcrest.Matchers.hasSize;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
+import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.put;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.net.URI;
+import java.time.LocalDateTime;
+import java.time.format.DateTimeFormatter;
 import java.util.List;
 
 import javax.transaction.Transactional;
@@ -19,18 +24,25 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.RequestBuilder;
 import org.springframework.test.web.servlet.request.MockHttpServletRequestBuilder;
+import org.springframework.web.util.UriTemplate;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.module.SimpleModule;
+import com.fasterxml.jackson.datatype.jsr310.ser.LocalDateTimeSerializer;
 
 import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
+import br.com.caelum.viagens.voos.controller.dto.input.NewPassagensInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
 import br.com.caelum.viagens.voos.controller.setup.CenariosVoosControllerSetUp;
 import br.com.caelum.viagens.voos.model.Rota;
 import br.com.caelum.viagens.voos.model.Voo;
+import br.com.caelum.viagens.voos.repository.VooRepository;
 
 @SpringBootTest
 @AutoConfigureMockMvc
@@ -51,9 +63,15 @@ public class VoosControllerTests {
 
 	@Autowired
 	private AeroportoRepository aeroportoRepository;
-
+	
+	@Autowired
+	private AeronaveRepository aeronaveRepository;
+	
 	@Autowired
 	private RotaRepository rotaRepository;
+	
+	@Autowired
+	private VooRepository vooRepository;
 
 	private CenariosVoosControllerSetUp cenarios;
 	
@@ -62,7 +80,7 @@ public class VoosControllerTests {
 		
 		this.cenarios = 
 				new CenariosVoosControllerSetUp(paisRepository, companhiaRepository, 
-						aeroportoRepository, rotaRepository);
+						aeroportoRepository, rotaRepository, aeronaveRepository, vooRepository);
 		
 	}
 
@@ -72,7 +90,7 @@ public class VoosControllerTests {
 		
 		RequestBuilder request = processaRequest(newVooDto);
 		
-		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository);
+		Voo voo  = newVooDto.toModel(companhiaRepository, rotaRepository, aeronaveRepository);
 		br.com.caelum.viagens.voos.model.Rota rota = voo.getRotasEmSequenciaLogica().iterator().next();
 		
 		mockMvc.perform(request).andExpect(status().isCreated())
@@ -98,9 +116,9 @@ public class VoosControllerTests {
 
 		RequestBuilder request = processaRequest(newVooDto);
 		
-		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository);
+		Voo voo = newVooDto.toModel(companhiaRepository, rotaRepository, aeronaveRepository);
 		List<Rota> rotas = voo.getRotasEmSequenciaLogica();
-				
+			
 		br.com.caelum.viagens.voos.model.Rota rota1 = rotas.get(0);
 		br.com.caelum.viagens.voos.model.Rota rota2 = rotas.get(1);
 		
@@ -146,31 +164,17 @@ public class VoosControllerTests {
 	}
 	
 	@Test
-	public void naoDeveSalvarNovoVooComLugaresDisponiveisIgualAZero() throws Exception {
+	public void naoDeveSalvarNovoVooComAeronaveQueNaoExiste() throws Exception {
 		NewVooInputDto newVooDto = 
-				cenarios.vooComRotaArgentinaParaBrasilComLugaresDisponiveisIgualAZero();
+				cenarios.vooComRotaArgentinaParaBrasilComAeronveInexistente();
 
 		RequestBuilder request = processaRequest(newVooDto);
 		
 		mockMvc.perform(request)
 			.andExpect(status().isBadRequest())
 			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("lugaresDisponiveis"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
-	}
-	
-	@Test
-	public void naoDeveSalvarNovoVooComLugaresDisponiveisNegativo() throws Exception {
-		NewVooInputDto newVooDto = cenarios.
-				vooComRotaArgentinaParaBrasilComLugaresDisponiveisNegativo();
-
-		RequestBuilder request = processaRequest(newVooDto);
-		
-		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("lugaresDisponiveis"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));		
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("aeronaveId"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("aeronave não existe no sistema."));		
 	}
 	
 	@Test
@@ -199,20 +203,6 @@ public class VoosControllerTests {
 			.andExpect(jsonPath("$.fieldErrors").isArray())	
 			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tipo"))
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));		
-	}
-	
-	@Test
-	public void naoDeveSalvarNovoVooComRotaComParadaComTipoInvalido() throws Exception {	
-		NewVooInputDto newVooDto = 
-				cenarios.vooComRotaArgentinaParaBrasilComTipoDeParadaInvalidoERotaBrasilParaChile();
-
-		RequestBuilder request = processaRequest(newVooDto);
-		
-		mockMvc.perform(request)
-			.andExpect(status().isBadRequest())
-			.andExpect(jsonPath("$.fieldErrors").isArray())		
-			.andExpect(jsonPath("$.fieldErrors[*].campo").value("rotas[].parada.tipo"))
-			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("tipo de parada inválido."));		
 	}
 	
 	@Test
@@ -386,11 +376,117 @@ public class VoosControllerTests {
 			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("as rotas não possuem uma sequência lógica."));
 	}
 	
+	@Test
+	public void deveGerarPassagensDeUmVoo() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComValorDataEHorarioValidos();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+		
+		mockMvc.perform(request).andExpect(status().isOk())
+			.andExpect(jsonPath("$.passagens[*]").isArray())
+			.andExpect(jsonPath("$.passagens[*]").isNotEmpty())
+			.andExpect(jsonPath("$.passagens[*]", hasSize(Modelo.ATR40.getFileiras()*Modelo.ATR40.getAssentosPorFileira())))
+			.andExpect(jsonPath("$.passagens[*]", hasSize(voos.get(0).getPassagens().size())));
+	}
+	
+	@Test
+	public void naoDeveGerarPassagensDeUmVooComDataEHoraNula() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComDataEHorarioNula();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("dataEHoraDePartida"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));
+	}
+	
+	@Test
+	public void naoDeveGerarPassagensDeUmVooComDataEHoraNoPassado() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComDataEHorarioNoPassado();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("dataEHoraDePartida"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve estar no futuro"));
+	}
+	
+	@Test
+	public void naoDeveGerarPassagensDeUmVooComValorIgualAZero() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComValorIgualAZero();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+			
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("valor"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));
+	}
+	
+	@Test
+	public void naoDeveGerarPassagensDeUmVooComValorNegativo() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComValorNegativo();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("valor"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("deve ser maior que 0"));
+	}
+	
+	@Test
+	public void naoDeveGerarPassagensDeUmVooComValorNulo() throws Exception {
+		NewPassagensInputDto newPassagensDto = cenarios.passagensComValorNulo();
+		
+		List<Voo> voos = (List<Voo>) vooRepository.findAll();
+		URI uri = new UriTemplate(ENDPOINT+"/{id}/passagens").expand(voos.get(0).getId());
+		
+		RequestBuilder request = processaRequest(newPassagensDto, uri);
+		
+		mockMvc.perform(request)
+			.andExpect(status().isBadRequest())
+			.andExpect(jsonPath("$.fieldErrors").isArray())
+			.andExpect(jsonPath("$.fieldErrors[*].campo").value("valor"))
+			.andExpect(jsonPath("$.fieldErrors[*].mensagem").value("não pode ser nulo"));
+	}
+	
+	
 	private MockHttpServletRequestBuilder processaRequest(NewVooInputDto newVooDto) throws JsonProcessingException {
 		return post(ENDPOINT).contentType(MediaType.APPLICATION_JSON_VALUE)
 				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
 				.content(new ObjectMapper().writeValueAsString(newVooDto));
 	}
 	
+	private MockHttpServletRequestBuilder processaRequest(NewPassagensInputDto newPassagensDto, URI uri) throws JsonProcessingException {
+		DateTimeFormatter formatter = DateTimeFormatter.ofPattern("dd/MM/yyyy kk:mm");
+		SimpleModule module = new SimpleModule().addSerializer(LocalDateTime.class, new LocalDateTimeSerializer(formatter));
+	    ObjectMapper objectMapper = new ObjectMapper().registerModule(module);
+	    
+		return put(uri).contentType(MediaType.APPLICATION_JSON_VALUE)
+				.header(HttpHeaders.ACCEPT_LANGUAGE, "pt-BR")
+				.content(objectMapper.writeValueAsString(newPassagensDto));
+	}
 	
 }

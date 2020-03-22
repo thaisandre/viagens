@@ -28,4 +28,10 @@ public class VooOutputDto {
 				.add(Voo::getLugaresDisponiveis)
 				.build();
 	}
+	
+	public static Map<String, Object> passagensGeradas(Voo voo) {
+		return DataView.of(voo)
+				.addCollection("passagens", Voo::getPassagens, PassagemOutputDto::detalhes)
+				.build();
+	}
 }

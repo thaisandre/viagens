@@ -1,5 +1,8 @@
 package br.com.caelum.viagens.voos.controller.setup;
 
+import java.math.BigDecimal;
+import java.math.RoundingMode;
+import java.time.LocalDateTime;
 import java.util.HashSet;
 import java.util.Set;
 
@@ -11,9 +14,17 @@ import br.com.caelum.viagens.administrativo.repository.AeroportoRepository;
 import br.com.caelum.viagens.administrativo.repository.CompanhiaRepository;
 import br.com.caelum.viagens.administrativo.repository.PaisRepository;
 import br.com.caelum.viagens.administrativo.repository.RotaRepository;
+import br.com.caelum.viagens.aeronaves.model.Aeronave;
+import br.com.caelum.viagens.aeronaves.model.Modelo;
+import br.com.caelum.viagens.aeronaves.repository.AeronaveRepository;
 import br.com.caelum.viagens.voos.controller.dto.input.NewParadaDaRotaInputDto;
+import br.com.caelum.viagens.voos.controller.dto.input.NewPassagensInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewRotaDoVooInputDto;
 import br.com.caelum.viagens.voos.controller.dto.input.NewVooInputDto;
+import br.com.caelum.viagens.voos.model.RotaSemVoo;
+import br.com.caelum.viagens.voos.model.TipoParada;
+import br.com.caelum.viagens.voos.model.Voo;
+import br.com.caelum.viagens.voos.repository.VooRepository;
 
 public class CenariosVoosControllerSetUp {
 	
@@ -21,6 +32,8 @@ public class CenariosVoosControllerSetUp {
 	private CompanhiaRepository companhiaRepository;
 	private AeroportoRepository aeroportoRepository;
 	private RotaRepository rotaRepository;
+	private AeronaveRepository aeronaveRepository;
+	private VooRepository vooRepository;
 	
 	private Pais argentina;
 	private Pais brasil;
@@ -29,6 +42,7 @@ public class CenariosVoosControllerSetUp {
 	private Pais uruguai;
 
 	private Companhia companhiaA;
+	private Aeronave aeronave;
 
 	private Aeroporto aeroportoA;
 	private Aeroporto aeroportoB;
@@ -45,15 +59,18 @@ public class CenariosVoosControllerSetUp {
 	private NewParadaDaRotaInputDto paradaValida;
 	
 	public CenariosVoosControllerSetUp(PaisRepository paisRepository, CompanhiaRepository companhiaRepository,
-			AeroportoRepository aeroportoRepository, RotaRepository rotaRepository) {
+			AeroportoRepository aeroportoRepository, RotaRepository rotaRepository, AeronaveRepository aeronaveReposiroty,
+			VooRepository vooRepository) {
 		this.paisRepository = paisRepository;
 		this.companhiaRepository = companhiaRepository;
 		this.aeroportoRepository = aeroportoRepository;
 		this.rotaRepository = rotaRepository;
+		this.aeronaveRepository = aeronaveReposiroty;
+		this.vooRepository = vooRepository;
 		
 		this.paradaValida = new NewParadaDaRotaInputDto();
 		this.paradaValida.setTempo(40);
-		this.paradaValida.setTipo("ESCALA");
+		this.paradaValida.setTipo(TipoParada.ESCALA);
 		
 		this.populaBanco();
 		
@@ -67,6 +84,7 @@ public class CenariosVoosControllerSetUp {
 		this.uruguai = this.paisRepository.save(new Pais("Uruguai"));
 		
 		this.companhiaA = this.companhiaRepository.save(new Companhia("CompanhiaA", this.argentina));
+		this.aeronave = this.aeronaveRepository.save(new Aeronave(Modelo.ATR40));
 		
 		this.aeroportoA = this.aeroportoRepository.save(new Aeroporto("AeroportoA", this.argentina));
 		this.aeroportoB = this.aeroportoRepository.save(new Aeroporto("AeroportoB", this.brasil));
@@ -80,6 +98,10 @@ public class CenariosVoosControllerSetUp {
 		this.rotaBtoA = this.rotaRepository.save(new Rota(this.aeroportoB, this.aeroportoA, 110));
 		this.rotaCtoA = this.rotaRepository.save(new Rota(this.aeroportoC, this.aeroportoA, 110));
 		this.rotaUtoP = this.rotaRepository.save(new Rota(this.aeroportoU, this.aeroportoP, 110));
+		
+		Set<RotaSemVoo> rotas = new HashSet<>();
+		rotas.add(new RotaSemVoo(rotaAtoB));
+		this.vooRepository.save(new Voo(rotas, this.companhiaA, aeronave));
 	}
 	
 	public NewVooInputDto vooComRotaArgentinaParaBrasilSemParada() {
@@ -91,7 +113,7 @@ public class CenariosVoosControllerSetUp {
 
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -111,7 +133,7 @@ public class CenariosVoosControllerSetUp {
 
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -127,13 +149,13 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(1L);
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
 	}
 	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComLugaresDisponiveisIgualAZero() {
+	public NewVooInputDto vooComRotaArgentinaParaBrasilComAeronveInexistente() {
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
 		
@@ -142,22 +164,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(0);
-		newVooDto.setRotas(rotas);
-		
-		return newVooDto;
-	}
-	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComLugaresDisponiveisNegativo() {
-		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
-		rotaAtoB.setRotaId(this.rotaAtoB.getId());
-		
-		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
-		rotas.add(rotaAtoB);
-		
-		NewVooInputDto newVooDto = new NewVooInputDto();
-		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(-10);
+		newVooDto.setAeronaveId(1L);
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -166,7 +173,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooSemRotas() {
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		
 		return newVooDto;
 
@@ -189,31 +196,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
-		newVooDto.setRotas(rotas);
-		
-		return newVooDto;
-	}
-	
-	public NewVooInputDto vooComRotaArgentinaParaBrasilComTipoDeParadaInvalidoERotaBrasilParaChile() {
-		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
-		parada.setTempo(40);
-		parada.setTipo("ESCALAA");
-		
-		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
-		rotaAtoB.setRotaId(this.rotaAtoB.getId());
-		rotaAtoB.setParada(parada);
-		
-		NewRotaDoVooInputDto rotaBtoC = new NewRotaDoVooInputDto();
-		rotaBtoC.setRotaId(this.rotaBtoC.getId());
-		
-		Set<NewRotaDoVooInputDto> rotas = new HashSet<>();
-		rotas.add(rotaAtoB);
-		rotas.add(rotaBtoC);
-		
-		NewVooInputDto newVooDto = new NewVooInputDto();
-		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -221,7 +204,7 @@ public class CenariosVoosControllerSetUp {
 	
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaSemTempoERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
@@ -236,7 +219,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -245,7 +228,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaComTempoIgualAZeroERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
 		parada.setTempo(0);
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
@@ -260,7 +243,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -269,7 +252,7 @@ public class CenariosVoosControllerSetUp {
 	public NewVooInputDto vooComRotaArgentinaParaBrasilComParadaComTempoNegativoERotaBrasilParaChile() {
 		NewParadaDaRotaInputDto parada = new NewParadaDaRotaInputDto();
 		parada.setTempo(-10);
-		parada.setTipo("ESCALA");
+		parada.setTipo(TipoParada.ESCALA);
 		
 		NewRotaDoVooInputDto rotaAtoB = new NewRotaDoVooInputDto();
 		rotaAtoB.setRotaId(this.rotaAtoB.getId());
@@ -284,7 +267,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -299,7 +282,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -319,7 +302,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -335,7 +318,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -356,7 +339,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -375,7 +358,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -395,7 +378,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -420,7 +403,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -445,7 +428,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -470,7 +453,7 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
@@ -490,10 +473,68 @@ public class CenariosVoosControllerSetUp {
 		
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(this.companhiaA.getId());
-		newVooDto.setLugaresDisponiveis(100);
+		newVooDto.setAeronaveId(this.aeronave.getId());
 		newVooDto.setRotas(rotas);
 		
 		return newVooDto;
+	}
+
+	public NewPassagensInputDto passagensComValorDataEHorarioValidos() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();
+		
+		LocalDateTime dataEHora = LocalDateTime.now().plusDays(2);
+		newPassagensDto.setDataEHoraDePartida(dataEHora);
+		
+		newPassagensDto.setValor(BigDecimal.valueOf(500.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return newPassagensDto;
+	}
+
+	public NewPassagensInputDto passagensComDataEHorarioNula() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();		
+		newPassagensDto.setValor(BigDecimal.valueOf(500.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return newPassagensDto;
+	}
+	
+	public NewPassagensInputDto passagensComDataEHorarioNoPassado() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();
+		
+		LocalDateTime dataEHora = LocalDateTime.now().minusDays(2);
+		newPassagensDto.setDataEHoraDePartida(dataEHora);
+		
+		newPassagensDto.setValor(BigDecimal.valueOf(500.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return newPassagensDto;
+	}
+	
+	public NewPassagensInputDto passagensComValorNulo() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();		
+		LocalDateTime dataEHora = LocalDateTime.now().plusDays(2);
+		newPassagensDto.setDataEHoraDePartida(dataEHora);;
+		return newPassagensDto;
+	}
+	
+	public NewPassagensInputDto passagensComValorIgualAZero() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();	
+		
+		LocalDateTime dataEHora = LocalDateTime.now().plusDays(2);
+		newPassagensDto.setDataEHoraDePartida(dataEHora);
+		
+		newPassagensDto.setValor(BigDecimal.valueOf(0.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return newPassagensDto;
+	}
+	
+	public NewPassagensInputDto passagensComValorNegativo() {
+		NewPassagensInputDto newPassagensDto = new NewPassagensInputDto();	
+		
+		LocalDateTime dataEHora = LocalDateTime.now().plusDays(2);
+		newPassagensDto.setDataEHoraDePartida(dataEHora);
+		
+		newPassagensDto.setValor(BigDecimal.valueOf(-500.0).setScale(2, RoundingMode.HALF_UP));
+		
+		return newPassagensDto;
 	}
 	
 }

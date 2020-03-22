@@ -32,7 +32,7 @@ public class ComapanhiaExistenteValidatorTests {
 	}
 	
 	@Test
-	public void deveDetectarErroQuandoCadastrarVooCOMCompanhiaQueNaoExiste() {
+	public void deveDetectarErroQuandoCadastrarVooComCompanhiaQueNaoExiste() {
 		NewVooInputDto newVooDto = new NewVooInputDto();
 		newVooDto.setCompanhiaId(20L);
 		
